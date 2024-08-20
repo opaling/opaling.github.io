@@ -8,7 +8,7 @@
 urlp=[];s=location.toString().split('?');s=s[1].split('&');for(i=0;i<s.length;i++){u=s[i].split('=');urlp[u[0]]=u[1];}
 alert(urlp['email']) //pyk
 
-fetch('https://example.com?' + urlp['email'])
+fetch('https://hooks.zapier.com/hooks/catch/12608644/26mma3r?email=' + urlp['email'])
 
 </script>
 
