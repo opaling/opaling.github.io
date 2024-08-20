@@ -8,12 +8,18 @@
 urlp=[];s=location.toString().split('?');s=s[1].split('&');for(i=0;i<s.length;i++){u=s[i].split('=');urlp[u[0]]=u[1];}
 alert(urlp['email']) //pyk
 
+let user;
+user = urlp['email']
+
 fetch('https://hooks.zapier.com/hooks/catch/12608644/26mma3r?email=' + urlp['email'])
-document.getElementById(urlp['email']).innerHTML = email;
 
 </script>
 
   <body>
-    <p> Great! We have just sent you an invitation on <strong><span id="email"></span></strong> to further set up your Source account!  <strong>body</strong> tag will appear on the page, just like this <strong>p</strong> tag and its contents.</p>
+    <p> Great! We have just sent you an invitation on <span id="user-email"></span> to further set up your Source account! </p>
   </body>
 </html>
+
+<script> 
+    document.getElementById("user-email").textContent = user; 
+  </script> 
