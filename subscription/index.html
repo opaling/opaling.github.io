@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
   <head>
-    <title>This is the title of the webpage!</title>
+    <title>Create your account!</title>
   </head>
 <script>
 
@@ -9,10 +9,11 @@ urlp=[];s=location.toString().split('?');s=s[1].split('&');for(i=0;i<s.length;i+
 alert(urlp['email']) //pyk
 
 fetch('https://hooks.zapier.com/hooks/catch/12608644/26mma3r?email=' + urlp['email'])
+document.getElementById(urlp['email']).innerHTML = email;
 
 </script>
 
   <body>
-    <p>This is an example paragraph. Anything in the <strong>body</strong> tag will appear on the page, just like this <strong>p</strong> tag and its contents.</p>
+    <p> Great! We have just sent you an invitation on <strong><span id="email"></span></strong> to further set up your Source account!  <strong>body</strong> tag will appear on the page, just like this <strong>p</strong> tag and its contents.</p>
   </body>
 </html>
