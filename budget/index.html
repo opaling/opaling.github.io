@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <title>Jaarbegroting</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- Voeg Chart.js toe voor grafieken -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <header>
+        <h1>Jaarbegroting</h1>
+    </header>
+
+    <nav>
+        <button id="inkomstenBtn">Inkomsten</button>
+        <button id="vasteLastenBtn">Vaste Lasten</button>
+        <button id="variabeleUitgavenBtn">Variabele Uitgaven</button>
+        <button id="overzichtBtn">Overzicht</button>
+    </nav>
+
+    <main>
+        <!-- Sectie voor Inkomsten -->
+        <section id="inkomstenSectie">
+            <h2>Inkomsten Toevoegen</h2>
+            <form id="inkomstenForm">
+                <label for="inkomenOmschrijving">Omschrijving:</label>
+                <input type="text" id="inkomenOmschrijving" required>
+
+                <label for="inkomenBedrag">Bedrag (€):</label>
+                <input type="number" id="inkomenBedrag" step="0.01" required>
+
+                <label for="inkomenFrequentie">Frequentie:</label>
+                <select id="inkomenFrequentie">
+                    <option value="maandelijks">Maandelijks</option>
+                    <option value="per kwartaal">Per kwartaal</option>
+                    <option value="jaarlijks">Jaarlijks</option>
+                </select>
+
+                <button type="submit">Toevoegen</button>
+            </form>
+
+            <table id="inkomstenTabel">
+                <thead>
+                    <tr>
+                        <th>Omschrijving</th>
+                        <th>Bedrag (€)</th>
+                        <th>Frequentie</th>
+                        <th>Jaarbedrag (€)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Inkomsten worden hier dynamisch toegevoegd -->
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Sectie voor Vaste Lasten -->
+        <section id="vasteLastenSectie" class="hidden">
+            <h2>Vaste Lasten Toevoegen</h2>
+            <form id="vasteLastenForm">
+                <label for="vasteLastOmschrijving">Omschrijving:</label>
+                <input type="text" id="vasteLastOmschrijving" required>
+
+                <label for="vasteLastBedrag">Bedrag (€):</label>
+                <input type="number" id="vasteLastBedrag" step="0.01" required>
+
+                <label for="vasteLastFrequentie">Frequentie:</label>
+                <select id="vasteLastFrequentie">
+                    <option value="maandelijks">Maandelijks</option>
+                    <option value="per kwartaal">Per kwartaal</option>
+                    <option value="jaarlijks">Jaarlijks</option>
+                </select>
+
+                <button type="submit">Toevoegen</button>
+            </form>
+
+            <table id="vasteLastenTabel">
+                <thead>
+                    <tr>
+                        <th>Omschrijving</th>
+                        <th>Bedrag (€)</th>
+                        <th>Frequentie</th>
+                        <th>Jaarbedrag (€)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Vaste lasten worden hier dynamisch toegevoegd -->
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Sectie voor Variabele Uitgaven -->
+        <section id="variabeleUitgavenSectie" class="hidden">
+            <h2>Variabele Uitgaven Toevoegen</h2>
+            <form id="variabeleUitgavenForm">
+                <label for="variabeleUitgaveOmschrijving">Omschrijving:</label>
+                <input type="text" id="variabeleUitgaveOmschrijving" required>
+
+                <label for="variabeleUitgaveBedrag">Maandbedrag (€):</label>
+                <input type="number" id="variabeleUitgaveBedrag" step="0.01" required>
+
+                <button type="submit">Toevoegen</button>
+            </form>
+
+            <table id="variabeleUitgavenTabel">
+                <thead>
+                    <tr>
+                        <th>Omschrijving</th>
+                        <th>Maandbedrag (€)</th>
+                        <th>Jaarbedrag (€)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Variabele uitgaven worden hier dynamisch toegevoegd -->
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Sectie voor Overzicht -->
+        <section id="overzichtSectie" class="hidden">
+            <h2>Jaaroverzicht</h2>
+            <div id="totalen">
+                <p>Totaal Inkomsten: €<span id="totaalInkomen">0.00</span></p>
+                <p>Totaal Vaste Lasten: €<span id="totaalVasteLasten">0.00</span></p>
+                <p>Totaal Variabele Uitgaven: €<span id="totaalVariabeleUitgaven">0.00</span></p>
+                <p><strong>Saldo: €<span id="saldo">0.00</span></strong></p>
+            </div>
+
+            <!-- Grafieken -->
+            <canvas id="uitgavenGrafiek"></canvas>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2023 Mijn Jaarbegroting</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
