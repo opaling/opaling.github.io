@@ -1,0 +1,67 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Content Briefing Wizard</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- API Key Prompt -->
+  <div id="api-key-prompt" class="modal">
+    <div class="modal-content">
+      <h2>Enter Your OpenAI API Key</h2>
+      <input type="password" id="api-key-input" placeholder="sk-...">
+      <button id="save-api-key-btn">Save API Key</button>
+    </div>
+  </div>
+
+  <!-- Main Container -->
+  <div id="main-container" style="display: none;">
+    <form id="wizard-form">
+
+      <!-- Step 1: Source Analysis -->
+      <div class="step" id="step-1">
+        <h2>Step 1: Source Analysis</h2>
+        <p>Please share a website or source URL you'd like to analyze for insights (e.g., target audience, tone, keywords).</p>
+        <input type="url" id="website-url" placeholder="Enter website URL" required>
+        <div id="step-1-suggestions" class="suggestions"></div>
+        <button type="button" class="next-btn">Next</button>
+      </div>
+
+      <!-- Step 2: Objectives -->
+      <div class="step" id="step-2" style="display: none;">
+        <h2>Step 2: Objectives</h2>
+        <p>What is the primary goal of this content?</p>
+        <select id="content-goals" multiple required>
+          <option value="Educate">Educate</option>
+          <option value="Inform">Inform</option>
+          <option value="Entertain">Entertain</option>
+          <option value="Persuade">Persuade</option>
+          <option value="Generate Leads">Generate Leads</option>
+          <option value="Drive Website Traffic">Drive Website Traffic</option>
+          <option value="Other">Other</option>
+        </select>
+        <div id="step-2-suggestions" class="suggestions"></div>
+        <button type="button" class="prev-btn">Previous</button>
+        <button type="button" class="next-btn">Next</button>
+      </div>
+
+      <!-- Additional steps go here, following the same structure -->
+
+      <!-- Step 10: Generate Content -->
+      <div class="step" id="step-10" style="display: none;">
+        <h2>Step 10: Generate Content</h2>
+        <p>Review your briefing and generate the content draft.</p>
+        <button type="button" id="generate-content-btn">Generate Content Draft</button>
+        <div id="content-draft" class="content-draft"></div>
+        <button type="button" class="prev-btn">Previous</button>
+      </div>
+
+    </form>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
