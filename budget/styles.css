@@ -100,3 +100,8 @@ canvas {
 footer {
     text-align: center;
 }
+
+/* Zorg dat het invulveld en dropdownmenu altijd de volledige breedte hebben */
+#inkomenBeschrijving, #inkomenBeschrijvingDropdown {
+    width: 100%;
+}
