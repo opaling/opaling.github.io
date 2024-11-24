@@ -19,8 +19,15 @@
             <li class="nav-item">
                 <button class="nav-link active" id="inkomsten-tab" data-bs-toggle="tab" data-bs-target="#inkomsten" type="button" role="tab">Inkomsten</button>
             </li>
-            <!-- Rest van de tabs blijven ongewijzigd -->
-            <!-- ... -->
+            <li class="nav-item">
+                <button class="nav-link" id="vaste-lasten-tab" data-bs-toggle="tab" data-bs-target="#vaste-lasten" type="button" role="tab">Vaste Lasten</button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-link" id="variabele-uitgaven-tab" data-bs-toggle="tab" data-bs-target="#variabele-uitgaven" type="button" role="tab">Variabele Uitgaven</button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-link" id="overzicht-tab" data-bs-toggle="tab" data-bs-target="#overzicht" type="button" role="tab">Overzicht</button>
+            </li>
         </ul>
 
         <!-- Tab inhoud -->
@@ -83,7 +90,6 @@
                         <button type="submit" class="btn btn-primary mt-3">Toevoegen</button>
                     </div>
                 </form>
-                <!-- Rest van de tab blijft ongewijzigd -->
                 <table class="table table-striped" id="inkomenTabel">
                     <thead>
                         <tr>
@@ -99,8 +105,110 @@
                     </tbody>
                 </table>
             </div>
-            <!-- Rest van de tabs blijven ongewijzigd -->
-            <!-- ... -->
+
+            <!-- Vaste Lasten Tab -->
+            <div class="tab-pane fade" id="vaste-lasten" role="tabpanel">
+                <h2>Vaste Lasten</h2>
+                <form id="vasteLastForm" class="row g-3 my-3">
+                    <div class="col-md-6">
+                        <label for="vasteLastBeschrijving" class="form-label">Beschrijving</label>
+                        <input type="text" class="form-control" id="vasteLastBeschrijving" required>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="vasteLastBedrag" class="form-label">Bedrag (€)</label>
+                        <input type="number" class="form-control" id="vasteLastBedrag" step="0.01" required>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="vasteLastFrequentie" class="form-label">Frequentie</label>
+                        <select id="vasteLastFrequentie" class="form-select">
+                            <option value="Maandelijks">Maandelijks</option>
+                            <option value="Per kwartaal">Per kwartaal</option>
+                            <option value="Jaarlijks">Jaarlijks</option>
+                        </select>
+                    </div>
+                    <div class="col-12">
+                        <button type="submit" class="btn btn-primary mt-3">Toevoegen</button>
+                    </div>
+                </form>
+                <table class="table table-striped" id="vasteLastTabel">
+                    <thead>
+                        <tr>
+                            <th>Beschrijving</th>
+                            <th>Bedrag (€)</th>
+                            <th>Frequentie</th>
+                            <th>Jaarbedrag (€)</th>
+                            <th>Acties</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Dynamische inhoud -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Variabele Uitgaven Tab -->
+            <div class="tab-pane fade" id="variabele-uitgaven" role="tabpanel">
+                <h2>Variabele Uitgaven</h2>
+                <form id="variabeleUitgaveForm" class="row g-3 my-3">
+                    <div class="col-md-6">
+                        <label for="variabeleUitgaveBeschrijving" class="form-label">Beschrijving</label>
+                        <input type="text" class="form-control" id="variabeleUitgaveBeschrijving" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="variabeleUitgaveBedrag" class="form-label">Maandelijks Bedrag (€)</label>
+                        <input type="number" class="form-control" id="variabeleUitgaveBedrag" step="0.01" required>
+                    </div>
+                    <div class="col-12">
+                        <button type="submit" class="btn btn-primary mt-3">Toevoegen</button>
+                    </div>
+                </form>
+                <table class="table table-striped" id="variabeleUitgaveTabel">
+                    <thead>
+                        <tr>
+                            <th>Beschrijving</th>
+                            <th>Maandelijks Bedrag (€)</th>
+                            <th>Jaarbedrag (€)</th>
+                            <th>Acties</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Dynamische inhoud -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Overzicht Tab -->
+            <div class="tab-pane fade" id="overzicht" role="tabpanel">
+                <h2>Overzicht</h2>
+                <div class="row my-4">
+                    <div class="col-md-4">
+                        <div class="card text-white bg-success mb-3">
+                            <div class="card-header">Totaal Inkomsten</div>
+                            <div class="card-body">
+                                <h5 class="card-title">€<span id="totaalInkomen">0.00</span></h5>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card text-white bg-danger mb-3">
+                            <div class="card-header">Totaal Uitgaven</div>
+                            <div class="card-body">
+                                <h5 class="card-title">€<span id="totaalUitgaven">0.00</span></h5>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card text-white bg-primary mb-3">
+                            <div class="card-header">Saldo</div>
+                            <div class="card-body">
+                                <h5 class="card-title">€<span id="saldo">0.00</span></h5>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Grafiek -->
+                <canvas id="uitgavenGrafiek"></canvas>
+            </div>
         </div>
     </div>
 
