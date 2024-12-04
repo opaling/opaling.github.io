@@ -1,110 +1,64 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>A blog for a blog</title>
-    <style>
-        /* [Same CSS as before] */
-        body { /* ... */ }
-        /* ... rest of your CSS ... */
-    </style>
+    <!-- ... [same as before] ... -->
 </head>
 <body>
 
 <header>
-    <!-- Update the src attribute with the actual URL of the Contentoo logo -->
+    <!-- Replace the src attribute with the actual URL of the Contentoo logo -->
     <img src="logo.png" alt="Contentoo Logo">
 </header>
 
 <main>
-    <h1>A blog for a blog</h1>
-    <div class="instructions">
-        <!-- Your placeholder instructions -->
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-        <!-- ... other lines ... -->
-    </div>
-
-    <div class="input-group">
-        <input type="text" id="blogUrl" placeholder="Enter blog post URL">
-        <button id="magicButton">Magic</button>
-    </div>
-
-    <div class="spinner" id="spinner">
-        <p>Loading...</p>
-    </div>
-
-    <div class="output" id="output"></div>
+    <!-- ... [same as before] ... -->
 </main>
 
 <script>
-    // Replace with your actual API key
-    const API_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...';
+    const API_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJvcmdhbmlzYXRpb25JZCI6Im9yZy1mNDliNzMzMi1hY2U4LTQxNzctOTgzYy0wN2NiNjU0OWNiNjUiLCJvcmdTaG9ydE5hbWUiOiJwNXp5M2giLCJwcm9qZWN0SWQiOiJjdnZzYmQ0dCIsImlhdCI6MTczMzM0MTgzMiwiZXhwIjoxNzM1OTMzODMyfQ.6fxTF3UofBML3oQMqF_JlJUi4vboHj5H7urtt0ArhIk'; // Replace with your actual API key
+    const apiUrl = 'https://p5zy3h.lleverage.run/1i7kpv1m';
 
-    // Your workflow ID
-    const WORKFLOW_ID = '1i7kpv1m';
-
-    // Base API URL
-    const API_BASE_URL = 'https://fo10d.lleverage.run';
-
-    document.getElementById('magicButton').addEventListener('click', async function() {
-        const blogUrl = document.getElementById('blogUrl').value.trim();
-        const spinner = document.getElementById('spinner');
-        const outputDiv = document.getElementById('output');
+    document.getElementById('magicButton').addEventListener('click', function() {
+        var blogUrl = document.getElementById('blogUrl').value.trim();
+        var spinner = document.getElementById('spinner');
+        var outputDiv = document.getElementById('output');
 
         if (!blogUrl) {
             alert('Please enter a blog post URL.');
             return;
         }
 
-        // Clear previous output and show spinner
         outputDiv.innerHTML = '';
         spinner.style.display = 'block';
 
-        // Prepare the data
-        const data = { blog: blogUrl };
+        var data = { blog: blogUrl };
 
-        try {
-            // Call the workflow
-            const result = await callWorkflow(WORKFLOW_ID, data);
-
-            // Hide spinner
+        fetch(apiUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${API_KEY}`
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => {
+            if (!response.ok) {
+                return response.text().then(text => {
+                    throw new Error(`Error ${response.status}: ${response.statusText}\n${text}`);
+                });
+            }
+            return response.json();
+        })
+        .then(data => {
             spinner.style.display = 'none';
-
-            // Display output in rich text
-            outputDiv.innerHTML = result.output || result;
-        } catch (error) {
+            outputDiv.innerHTML = data.output;
+        })
+        .catch(error => {
             console.error('Error:', error);
             spinner.style.display = 'none';
             outputDiv.innerHTML = `<p style="color:red;">${error.message}</p>`;
-        }
-    });
-
-    // Function based on API specifications
-    async function callWorkflow(workflowId, inputs) {
-        const apiUrl = `${API_BASE_URL}/${workflowId}`;
-        const apiKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJvcmdhbmlzYXRpb25JZCI6Im9yZy1mNDliNzMzMi1hY2U4LTQxNzctOTgzYy0wN2NiNjU0OWNiNjUiLCJvcmdTaG9ydE5hbWUiOiJwNXp5M2giLCJwcm9qZWN0SWQiOiJjdnZzYmQ0dCIsImlhdCI6MTczMzM0MTgzMiwiZXhwIjoxNzM1OTMzODMyfQ.6fxTF3UofBML3oQMqF_JlJUi4vboHj5H7urtt0ArhIk";
-
-        const response = await fetch(apiUrl, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${apiKey}`,
-            },
-            body: JSON.stringify(inputs),
         });
-
-        if (!response.ok) {
-            const errorText = await response.text();
-            throw new Error(`Workflow call failed: ${response.statusText}\n${errorText}`);
-        }
-
-        const responseText = await response.text();
-        try {
-            return JSON.parse(responseText);
-        } catch (error) {
-            return responseText;
-        }
-    }
+    });
 </script>
 
 </body>
