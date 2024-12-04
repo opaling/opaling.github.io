@@ -60,7 +60,39 @@
             margin-top: 20px;
             line-height: 1.6;
         }
+        /* Styles for formatted content */
+        .output h1, .output h2, .output h3, .output h4, .output h5, .output h6 {
+            color: #333;
+            margin-top: 1em;
+        }
+        .output p {
+            margin-bottom: 1em;
+        }
+        .output ul, .output ol {
+            margin-left: 20px;
+        }
+        .output blockquote {
+            margin: 1em 0;
+            padding-left: 1em;
+            border-left: 4px solid #ccc;
+            color: #666;
+        }
+        .output code {
+            background-color: #f9f9f9;
+            padding: 2px 4px;
+            font-family: monospace;
+        }
+        .output pre code {
+            display: block;
+            padding: 1em;
+            overflow-x: auto;
+            background-color: #f9f9f9;
+        }
     </style>
+    <!-- Include Marked.js -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <!-- Include DOMPurify -->
+    <script src="https://cdn.jsdelivr.net/npm/dompurify@2.4.0/dist/purify.min.js"></script>
 </head>
 <body>
 
@@ -94,7 +126,7 @@
 <script>
     // Replace 'YOUR_API_KEY' with your actual API key
     const API_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJvcmdhbmlzYXRpb25JZCI6Im9yZy1mNDliNzMzMi1hY2U4LTQxNzctOTgzYy0wN2NiNjU0OWNiNjUiLCJvcmdTaG9ydE5hbWUiOiJwNXp5M2giLCJwcm9qZWN0SWQiOiJjdnZzYmQ0dCIsImlhdCI6MTczMzM0MTgzMiwiZXhwIjoxNzM1OTMzODMyfQ.6fxTF3UofBML3oQMqF_JlJUi4vboHj5H7urtt0ArhIk';
-    const WORKFLOW_ID = '1i7kpv1m';
+    const WORKFLOW_ID = '1i7kpv1m/1.0';
     const API_BASE_URL = 'https://p5zy3h.lleverage.run';
 
     document.getElementById('magicButton').addEventListener('click', async function() {
@@ -121,12 +153,15 @@
             // Hide spinner
             spinner.style.display = 'none';
 
+            // Extract the 'body' field from the response
+            const content = result.body;
+
             // Display output in rich text
-            outputDiv.innerHTML = result.output || result;
+            outputDiv.innerHTML = formatContent(content);
         } catch (error) {
             console.error('Error:', error);
             spinner.style.display = 'none';
-            outputDiv.innerHTML = `<p style="color:red;">${error.message}</p>`;
+            outputDiv.innerHTML = `<p style="color:red;">An error occurred: ${error.message}</p>`;
         }
     });
 
@@ -155,6 +190,17 @@
         } catch (error) {
             return responseText;
         }
+    }
+
+    // Function to format the content
+    function formatContent(content) {
+        // Convert Markdown to HTML
+        const dirtyHtml = marked.parse(content);
+
+        // Sanitize the HTML
+        const cleanHtml = DOMPurify.sanitize(dirtyHtml);
+
+        return cleanHtml;
     }
 </script>
 
