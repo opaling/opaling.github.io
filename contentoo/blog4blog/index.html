@@ -69,7 +69,7 @@
 
 <header>
     <!-- Replace the src attribute with the actual URL of the Contentoo logo -->
-    <img src="logo.png" alt="Contentoo Logo">
+    <img src="https://app.contentoo.com/path-to-logo.png" alt="Contentoo Logo">
 </header>
 
 <main>
@@ -113,11 +113,12 @@
         // Prepare the data
         var data = { blog: blogUrl };
 
-        // Send POST request
+        // Send POST request with API key in headers
         fetch('https://p5zy3h.lleverage.run/1i7kpv1m', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJvcmdhbmlzYXRpb25JZCI6Im9yZy1mNDliNzMzMi1hY2U4LTQxNzctOTgzYy0wN2NiNjU0OWNiNjUiLCJvcmdTaG9ydE5hbWUiOiJwNXp5M2giLCJwcm9qZWN0SWQiOiJjdnZzYmQ0dCIsImlhdCI6MTczMzM0MTgzMiwiZXhwIjoxNzM1OTMzODMyfQ.6fxTF3UofBML3oQMqF_JlJUi4vboHj5H7urtt0ArhIk' // Replace YOUR_API_KEY with your actual API key
             },
             body: JSON.stringify(data)
         })
