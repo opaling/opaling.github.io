@@ -153,8 +153,16 @@
             // Hide spinner
             spinner.style.display = 'none';
 
+            // Log the result to inspect it
+            console.log('API Response:', result);
+
             // Extract the 'body' field from the response
             const content = result.body;
+
+            // Check if content is a non-empty string
+            if (typeof content !== 'string' || !content.trim()) {
+                throw new Error('The API response does not contain valid content in the "body" field.');
+            }
 
             // Display output in rich text
             outputDiv.innerHTML = formatContent(content);
@@ -179,17 +187,20 @@
             body: JSON.stringify(inputs),
         });
 
-        if (!response.ok) {
-            const errorText = await response.text();
-            throw new Error(`Workflow call failed: ${response.statusText}\n${errorText}`);
+        const responseText = await response.text();
+
+        let data;
+        try {
+            data = JSON.parse(responseText);
+        } catch (error) {
+            data = responseText;
         }
 
-        const responseText = await response.text();
-        try {
-            return JSON.parse(responseText);
-        } catch (error) {
-            return responseText;
+        if (!response.ok) {
+            throw new Error(`Workflow call failed: ${response.status} ${response.statusText}\n${data}`);
         }
+
+        return data;
     }
 
     // Function to format the content
