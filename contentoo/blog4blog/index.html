@@ -4,90 +4,9 @@
     <meta charset="UTF-8">
     <title>A blog for a blog</title>
     <style>
-        /* Basic styles to mimic the styling from https://app.contentoo.com */
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            background-color: #f5f5f5;
-        }
-        header {
-            background-color: #fff;
-            padding: 10px 20px;
-            display: flex;
-            align-items: center;
-        }
-        header img {
-            height: 40px;
-        }
-        main {
-            max-width: 800px;
-            margin: 30px auto;
-            padding: 20px;
-            background-color: #fff;
-        }
-        h1 {
-            font-size: 2em;
-            color: #333;
-        }
-        .instructions {
-            color: #666;
-            line-height: 1.6;
-            margin-bottom: 20px;
-        }
-        .input-group {
-            display: flex;
-            margin-bottom: 10px;
-        }
-        .input-group input {
-            flex: 1;
-            padding: 10px;
-            font-size: 1em;
-            border: 1px solid #ccc;
-        }
-        .input-group button {
-            padding: 10px 20px;
-            font-size: 1em;
-            background-color: #0073e6;
-            color: #fff;
-            border: none;
-            cursor: pointer;
-        }
-        .spinner {
-            display: none;
-            margin-bottom: 20px;
-        }
-        .output {
-            margin-top: 20px;
-            line-height: 1.6;
-        }
-        /* Styles for formatted content */
-        .output h1, .output h2, .output h3, .output h4, .output h5, .output h6 {
-            color: #333;
-            margin-top: 1em;
-        }
-        .output p {
-            margin-bottom: 1em;
-        }
-        .output ul, .output ol {
-            margin-left: 20px;
-        }
-        .output blockquote {
-            margin: 1em 0;
-            padding-left: 1em;
-            border-left: 4px solid #ccc;
-            color: #666;
-        }
-        .output code {
-            background-color: #f9f9f9;
-            padding: 2px 4px;
-            font-family: monospace;
-        }
-        .output pre code {
-            display: block;
-            padding: 1em;
-            overflow-x: auto;
-            background-color: #f9f9f9;
-        }
+        /* [Same CSS as before] */
+        body { /* ... */ }
+        /* ... rest of your CSS ... */
     </style>
     <!-- Include Marked.js -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
@@ -97,18 +16,16 @@
 <body>
 
 <header>
-    <!-- Replace the src attribute with the actual URL of the Contentoo logo -->
+    <!-- Update the src attribute with the actual URL of the Contentoo logo -->
     <img src="logo.png" alt="Contentoo Logo">
 </header>
 
 <main>
     <h1>A blog for a blog</h1>
     <div class="instructions">
+        <!-- Your placeholder instructions -->
         <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-        <p>Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-        <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.</p>
-        <p>Nisi ut aliquip ex ea commodo consequat.</p>
-        <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum.</p>
+        <!-- ... other lines ... -->
     </div>
 
     <div class="input-group">
@@ -148,20 +65,14 @@
 
         try {
             // Call the workflow
-            const result = await callWorkflow(WORKFLOW_ID, data);
+            const content = await callWorkflow(WORKFLOW_ID, data);
 
             // Hide spinner
             spinner.style.display = 'none';
 
-            // Log the result to inspect it
-            console.log('API Response:', result);
-
-            // Extract the 'body' field from the response
-            const content = result.body;
-
             // Check if content is a non-empty string
             if (typeof content !== 'string' || !content.trim()) {
-                throw new Error('The API response does not contain valid content in the "body" field.');
+                throw new Error('The API response did not return valid content.');
             }
 
             // Display output in rich text
@@ -189,18 +100,12 @@
 
         const responseText = await response.text();
 
-        let data;
-        try {
-            data = JSON.parse(responseText);
-        } catch (error) {
-            data = responseText;
-        }
-
         if (!response.ok) {
-            throw new Error(`Workflow call failed: ${response.status} ${response.statusText}\n${data}`);
+            throw new Error(`Workflow call failed: ${response.status} ${response.statusText}\n${responseText}`);
         }
 
-        return data;
+        // Since the API returns plain text, return the responseText directly
+        return responseText;
     }
 
     // Function to format the content
