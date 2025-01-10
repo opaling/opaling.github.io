@@ -1,123 +1,137 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8" />
   <title>Talk to Maya</title>
-  <meta charset="utf-8" />
+  <!-- Example minimal styling inspired by your screenshot -->
   <style>
-    /* Basic reset & minimal styling */
+    /* RESET */
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
     }
+
     body {
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif;
-      background-color: #fff;
+      background-color: #fdfaf6; /* Soft off-white background */
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       color: #333;
+      line-height: 1.4;
     }
-    
-    /* Header with logo and title */
+
+    /* Header with logo and page title */
     header {
       display: flex;
       align-items: center;
       padding: 20px;
-      border-bottom: 1px solid #eee;
     }
     #logo {
       height: 40px;
-      margin-right: 10px;
+      margin-right: 12px;
     }
     #pageTitle {
-      font-size: 1.5rem;
+      font-size: 1.25rem;
       font-weight: bold;
     }
 
-    /* Intro screen styling */
-    #introScreen {
-      max-width: 700px;
-      margin: 40px auto;
-      text-align: center;
+    /* INTRO SCREEN & CHAT SCREEN CONTAINERS */
+    .screen {
+      max-width: 600px;
+      margin: 2rem auto;
+      background-color: #fff;
+      border-radius: 12px; /* Rounded corners */
+      box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+      padding: 1.5rem;
+      display: none; /* We'll toggle display later */
     }
+
+    /* INTRO SCREEN STYLES */
     #introScreen h2 {
-      font-size: 1.6rem;
-      margin-bottom: 20px;
+      font-size: 1.4rem;
+      margin-bottom: 1rem;
     }
     #introScreen p {
       font-size: 1rem;
-      line-height: 1.5;
-      margin-bottom: 30px;
       color: #555;
-    }
-    #continueBtn {
-      background-color: #00bfc9;
-      color: #fff;
-      border: none;
-      padding: 12px 24px;
-      cursor: pointer;
-      font-size: 1rem;
-      border-radius: 4px;
-    }
-    #continueBtn:hover {
-      background-color: #0098a0;
+      margin-bottom: 1.5rem;
     }
 
-    /* Chat screen styling */
-    #chatScreen {
-      display: none; /* hidden until user continues from intro screen */
-      max-width: 700px;
-      margin: 40px auto;
+    /* Single primary button on intro screen */
+    #introScreen button {
+      display: inline-block;
+      background-color: #000;  /* black background */
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 0.75rem 1.5rem;
+      font-size: 1rem;
+      cursor: pointer;
+      font-weight: 500;
     }
+    #introScreen button:hover {
+      background-color: #333;
+    }
+
+    /* CHAT SCREEN STYLES */
     #chatWindow {
       height: 400px;
       border: 1px solid #ccc;
-      overflow-y: auto;
-      margin-bottom: 10px;
-      padding: 10px;
+      border-radius: 8px;
       background-color: #fafafa;
+      overflow-y: auto;
+      margin-bottom: 1rem;
+      padding: 1rem;
+    }
+    .message {
+      margin-bottom: 0.75rem;
+      white-space: pre-wrap;
     }
     .user {
-      color: #1d4ed8; /* a nice blue */
-      margin: 10px 0;
-      white-space: pre-wrap;
+      color: #1d4ed8; /* blue tone for user */
     }
     .assistant {
-      color: #059669; /* a green tone */
-      margin: 10px 0;
-      white-space: pre-wrap;
+      color: #059669; /* green tone for assistant */
     }
 
-    /* Textarea & send button */
+    /* Input container for chat text area + send button */
     #inputContainer {
       display: flex;
-      gap: 10px;
+      gap: 0.75rem;
     }
     #userMessage {
       flex: 1;
       min-height: 40px;
-      resize: none;       /* so we control auto-resize with JS */
-      padding: 8px;
+      resize: none; /* auto-resize via JS */
+      padding: 0.75rem;
       font-size: 1rem;
       line-height: 1.4;
       border: 1px solid #ccc;
-      border-radius: 4px;
+      border-radius: 8px;
+      font-family: inherit;
+      color: #444;
     }
+    #userMessage::placeholder {
+      color: #aaa;
+    }
+    /* Single primary button for sending */
     #sendBtn {
-      width: 80px;
-      background-color: #00bfc9;
+      background-color: #000;
       color: #fff;
       border: none;
-      border-radius: 4px;
-      cursor: pointer;
+      border-radius: 8px;
+      padding: 0.75rem 1.25rem;
       font-size: 1rem;
+      cursor: pointer;
+      font-weight: 500;
     }
     #sendBtn:hover {
-      background-color: #0098a0;
+      background-color: #333;
     }
   </style>
 </head>
 <body>
 
-  <!-- Header with logo and title -->
+  <!-- HEADER -->
   <header>
     <img
       src="https://app.contentoo.com/static/media/contentoo-logo-dark.png"
@@ -127,69 +141,72 @@
     <div id="pageTitle">Talk to Maya</div>
   </header>
 
-  <!-- Intro Screen -->
-  <div id="introScreen">
+  <!-- INTRO SCREEN -->
+  <div id="introScreen" class="screen" style="display: block;">
     <h2>Meet Maya: Your AI Content Ally</h2>
     <p>
       Say hello to Maya, your smart, friendly, and creative partner in content creation.
       Whether you need fresh ideas, a sharp content strategy, or a perfectly structured brief,
-      Maya is here to make it happen. Ready to brainstorm, refine, and create with ease? Let Maya
-      take your content to the next level.
+      Maya is here to make it happen. Ready to brainstorm, refine, and create with ease?
+      Let Maya take your content to the next level.
     </p>
-    <button id="continueBtn">Continue &rarr;</button>
+    <button id="continueBtn">Continue →</button>
   </div>
 
-  <!-- Chat Screen (hidden by default) -->
-  <div id="chatScreen">
+  <!-- CHAT SCREEN -->
+  <div id="chatScreen" class="screen">
     <div id="chatWindow"></div>
     <div id="inputContainer">
-      <textarea id="userMessage" placeholder="Type your message here..." rows="1"></textarea>
+      <textarea
+        id="userMessage"
+        placeholder="Type your message here..."
+        rows="1"
+      ></textarea>
       <button id="sendBtn">Send</button>
     </div>
   </div>
 
   <script>
-    // 1. Hide/Show screens
+    // Intro-to-Chat logic
     const introScreen = document.getElementById('introScreen');
     const chatScreen = document.getElementById('chatScreen');
     const continueBtn = document.getElementById('continueBtn');
+
     continueBtn.addEventListener('click', () => {
       introScreen.style.display = 'none';
       chatScreen.style.display = 'block';
     });
 
-    // 2. Chat functionality
+    // Chat logic
     let chatHistory = [];
 
-    // Reference elements
     const chatWindow = document.getElementById('chatWindow');
     const userMessageField = document.getElementById('userMessage');
     const sendBtn = document.getElementById('sendBtn');
 
-    // Send on button click
+    // Send message when user clicks Send
     sendBtn.addEventListener('click', sendMessage);
 
-    // Allow pressing Enter (shift+enter for new line)
+    // Send on Enter (Shift+Enter adds newline)
     userMessageField.addEventListener('keypress', function(e) {
-      // If only Enter pressed without shift, send
       if (e.key === 'Enter' && !e.shiftKey) {
         e.preventDefault();
         sendMessage();
       }
     });
 
-    // Auto-resize text area
+    // Auto-resize textarea
     userMessageField.addEventListener('input', autoResizeTextArea);
     function autoResizeTextArea() {
       this.style.height = 'auto';
-      this.style.height = (this.scrollHeight) + 'px';
+      this.style.height = this.scrollHeight + 'px';
     }
 
-    // Convert simple Markdown-like formatting to HTML
+    // Convert some simple markdown to HTML (optional)
     function formatToHtml(text) {
-      // Convert **bold** -> <strong>...</strong>
+      // bold **text** => <strong>text</strong>
       let html = text.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
-      // Convert newlines to <br>
+      // new lines => <br>
       html = html.replace(/\n/g, '<br>');
       return html;
     }
@@ -198,30 +215,30 @@
       const message = userMessageField.value.trim();
       if (!message) return;
 
-      // Append user's message to chat history
+      // Add user's message
       chatHistory.push(`User: ${message}`);
       updateChatWindow();
 
-      // Send entire chat history to server
+      // Send entire chat history to your endpoint
       fetch("https://p5zy3h.lleverage.run/o5txw05x/2.3", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ chatHistory: chatHistory.join("\n") })
       })
-        .then(response => response.text())  // server returns plain text
-        .then(data => {
-          const assistantResponse = data || "No response.";
-          chatHistory.push(`Assistant: ${assistantResponse}`);
-          updateChatWindow();
-        })
-        .catch(error => {
-          console.error("Error:", error);
-        })
-        .finally(() => {
-          userMessageField.value = "";
-          autoResizeTextArea.call(userMessageField); // reset height after clearing
-          userMessageField.focus();
-        });
+      .then(response => response.text())
+      .then(data => {
+        const assistantResponse = data || "No response.";
+        chatHistory.push(`Maya: ${assistantResponse}`);
+        updateChatWindow();
+      })
+      .catch(error => {
+        console.error("Error:", error);
+      })
+      .finally(() => {
+        userMessageField.value = "";
+        autoResizeTextArea.call(userMessageField);
+        userMessageField.focus();
+      });
     }
 
     function updateChatWindow() {
@@ -229,13 +246,17 @@
 
       chatHistory.forEach(line => {
         const div = document.createElement("div");
-        const formattedText = formatToHtml(line);
+        div.classList.add("message");
 
+        // style the message based on user or assistant
         if (line.startsWith("User:")) {
-          div.className = "user";
+          div.classList.add("user");
         } else {
-          div.className = "assistant";
+          div.classList.add("assistant");
         }
+
+        // Convert text to HTML if desired
+        const formattedText = formatToHtml(line);
         div.innerHTML = formattedText;
         chatWindow.appendChild(div);
       });
