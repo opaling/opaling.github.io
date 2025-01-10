@@ -72,10 +72,10 @@
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ chatHistory: chatHistory.join("\n") })
     })
-    .then(response => response.json())
+    .then(response => response.text())  // Use text() because the server returns plain text
     .then(data => {
-      // Assuming the API returns a JSON object with a field called "reply"
-      const assistantResponse = data.reply || "No response.";
+      // "data" is the server's response as plain text
+      const assistantResponse = data || "No response.";
       chatHistory.push(`Assistant: ${assistantResponse}`);
       updateChatWindow();
     })
@@ -95,15 +95,13 @@
     chatWindow.innerHTML = "";
 
     chatHistory.forEach(line => {
-      // Simple check to style user vs. assistant lines differently
       const div = document.createElement("div");
       if (line.startsWith("User:")) {
         div.className = "user";
-        div.textContent = line;
       } else {
         div.className = "assistant";
-        div.textContent = line;
       }
+      div.textContent = line;
       chatWindow.appendChild(div);
     });
 
