@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Basic AI Chat</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+    #chatWindow {
+      width: 100%;
+      max-width: 600px;
+      height: 300px;
+      border: 1px solid #ccc;
+      overflow-y: auto;
+      margin-bottom: 10px;
+      padding: 10px;
+    }
+    #userMessage {
+      width: calc(100% - 60px);
+      max-width: 540px;
+      height: 30px;
+    }
+    #sendBtn {
+      width: 50px;
+      height: 34px;
+      margin-left: 10px;
+    }
+    .user {
+      color: blue;
+      margin: 5px 0;
+    }
+    .assistant {
+      color: green;
+      margin: 5px 0;
+    }
+  </style>
+</head>
+<body>
+
+<h1>Chat with AI</h1>
+<div id="chatWindow"></div>
+<input type="text" id="userMessage" placeholder="Type your message here..." />
+<button id="sendBtn">Send</button>
+
+<script>
+  // Holds the running chat history
+  let chatHistory = [];
+
+  // Attach an event to the "Send" button
+  document.getElementById('sendBtn').addEventListener('click', sendMessage);
+
+  // Allow pressing Enter to send the message
+  document.getElementById('userMessage').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+      sendMessage();
+    }
+  });
+
+  function sendMessage() {
+    const userMessageField = document.getElementById('userMessage');
+    const message = userMessageField.value.trim();
+    if (!message) return;
+
+    // Append user's message to the chat history
+    chatHistory.push(`User: ${message}`);
+    updateChatWindow();
+
+    // Send the entire chat history to the server
+    fetch("https://p5zy3h.lleverage.run/o5txw05x", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ chatHistory: chatHistory.join("\n") })
+    })
+    .then(response => response.json())
+    .then(data => {
+      // Assuming the API returns a JSON object with a field called "reply"
+      const assistantResponse = data.reply || "No response.";
+      chatHistory.push(`Assistant: ${assistantResponse}`);
+      updateChatWindow();
+    })
+    .catch(error => {
+      console.error("Error:", error);
+    })
+    .finally(() => {
+      // Clear the user's input
+      userMessageField.value = "";
+      userMessageField.focus();
+    });
+  }
+
+  // Updates the chat window in the browser
+  function updateChatWindow() {
+    const chatWindow = document.getElementById('chatWindow');
+    chatWindow.innerHTML = "";
+
+    chatHistory.forEach(line => {
+      // Simple check to style user vs. assistant lines differently
+      const div = document.createElement("div");
+      if (line.startsWith("User:")) {
+        div.className = "user";
+        div.textContent = line;
+      } else {
+        div.className = "assistant";
+        div.textContent = line;
+      }
+      chatWindow.appendChild(div);
+    });
+
+    // Scroll to the bottom each time new content is added
+    chatWindow.scrollTop = chatWindow.scrollHeight;
+  }
+</script>
+
+</body>
+</html>
