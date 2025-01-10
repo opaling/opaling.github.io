@@ -1,135 +1,249 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Basic AI Chat</title>
+  <title>Talk to Maya</title>
+  <meta charset="utf-8" />
   <style>
+    /* Basic reset & minimal styling */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
     body {
-      font-family: Arial, sans-serif;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif;
+      background-color: #fff;
+      color: #333;
+    }
+    
+    /* Header with logo and title */
+    header {
+      display: flex;
+      align-items: center;
       padding: 20px;
+      border-bottom: 1px solid #eee;
+    }
+    #logo {
+      height: 40px;
+      margin-right: 10px;
+    }
+    #pageTitle {
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
+
+    /* Intro screen styling */
+    #introScreen {
+      max-width: 700px;
+      margin: 40px auto;
+      text-align: center;
+    }
+    #introScreen h2 {
+      font-size: 1.6rem;
+      margin-bottom: 20px;
+    }
+    #introScreen p {
+      font-size: 1rem;
+      line-height: 1.5;
+      margin-bottom: 30px;
+      color: #555;
+    }
+    #continueBtn {
+      background-color: #00bfc9;
+      color: #fff;
+      border: none;
+      padding: 12px 24px;
+      cursor: pointer;
+      font-size: 1rem;
+      border-radius: 4px;
+    }
+    #continueBtn:hover {
+      background-color: #0098a0;
+    }
+
+    /* Chat screen styling */
+    #chatScreen {
+      display: none; /* hidden until user continues from intro screen */
+      max-width: 700px;
+      margin: 40px auto;
     }
     #chatWindow {
-      width: 100%;
-      max-width: 600px;
-      height: 300px;
+      height: 400px;
       border: 1px solid #ccc;
       overflow-y: auto;
       margin-bottom: 10px;
       padding: 10px;
-    }
-    #userMessage {
-      width: calc(100% - 60px);
-      max-width: 540px;
-      height: 30px;
-    }
-    #sendBtn {
-      width: 50px;
-      height: 34px;
-      margin-left: 10px;
+      background-color: #fafafa;
     }
     .user {
-      color: blue;
+      color: #1d4ed8; /* a nice blue */
       margin: 10px 0;
       white-space: pre-wrap;
     }
     .assistant {
-      color: green;
+      color: #059669; /* a green tone */
       margin: 10px 0;
       white-space: pre-wrap;
+    }
+
+    /* Textarea & send button */
+    #inputContainer {
+      display: flex;
+      gap: 10px;
+    }
+    #userMessage {
+      flex: 1;
+      min-height: 40px;
+      resize: none;       /* so we control auto-resize with JS */
+      padding: 8px;
+      font-size: 1rem;
+      line-height: 1.4;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    #sendBtn {
+      width: 80px;
+      background-color: #00bfc9;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+    #sendBtn:hover {
+      background-color: #0098a0;
     }
   </style>
 </head>
 <body>
 
-<h1>Chat with AI</h1>
-<div id="chatWindow"></div>
-<input type="text" id="userMessage" placeholder="Type your message here..." />
-<button id="sendBtn">Send</button>
+  <!-- Header with logo and title -->
+  <header>
+    <img
+      src="https://app.contentoo.com/static/media/contentoo-logo-dark.png"
+      alt="Contentoo Logo"
+      id="logo"
+    />
+    <div id="pageTitle">Talk to Maya</div>
+  </header>
 
-<script>
-  // Holds the running chat history
-  let chatHistory = [];
+  <!-- Intro Screen -->
+  <div id="introScreen">
+    <h2>Meet Maya: Your AI Content Ally</h2>
+    <p>
+      Say hello to Maya, your smart, friendly, and creative partner in content creation.
+      Whether you need fresh ideas, a sharp content strategy, or a perfectly structured brief,
+      Maya is here to make it happen. Ready to brainstorm, refine, and create with ease? Let Maya
+      take your content to the next level.
+    </p>
+    <button id="continueBtn">Continue &rarr;</button>
+  </div>
 
-  // Attach an event to the "Send" button
-  document.getElementById('sendBtn').addEventListener('click', sendMessage);
+  <!-- Chat Screen (hidden by default) -->
+  <div id="chatScreen">
+    <div id="chatWindow"></div>
+    <div id="inputContainer">
+      <textarea id="userMessage" placeholder="Type your message here..." rows="1"></textarea>
+      <button id="sendBtn">Send</button>
+    </div>
+  </div>
 
-  // Allow pressing Enter to send the message
-  document.getElementById('userMessage').addEventListener('keypress', function(e) {
-    if (e.key === 'Enter') {
-      sendMessage();
-    }
-  });
-
-  // Convert plain text with simple Markdown to HTML
-  // - Replaces **bold** notation with <strong> tags
-  // - Replaces newlines with <br>
-  function formatToHtml(text) {
-    // Convert **bold** -> <strong>...</strong>
-    let html = text.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
-
-    // Convert newlines to <br>
-    html = html.replace(/\n/g, '<br>');
-
-    return html;
-  }
-
-  function sendMessage() {
-    const userMessageField = document.getElementById('userMessage');
-    const message = userMessageField.value.trim();
-    if (!message) return;
-
-    // Append user's message to the chat history
-    chatHistory.push(`User: ${message}`);
-    updateChatWindow();
-
-    // Send the entire chat history to the server
-    fetch("https://p5zy3h.lleverage.run/o5txw05x/2.3", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ chatHistory: chatHistory.join("\n") })
-    })
-    .then(response => response.text())  // The server returns plain text
-    .then(data => {
-      // 'data' is the server's response as a plain text string
-      const assistantResponse = data || "No response.";
-      chatHistory.push(`Assistant: ${assistantResponse}`);
-      updateChatWindow();
-    })
-    .catch(error => {
-      console.error("Error:", error);
-    })
-    .finally(() => {
-      // Clear the user's input
-      userMessageField.value = "";
-      userMessageField.focus();
+  <script>
+    // 1. Hide/Show screens
+    const introScreen = document.getElementById('introScreen');
+    const chatScreen = document.getElementById('chatScreen');
+    const continueBtn = document.getElementById('continueBtn');
+    continueBtn.addEventListener('click', () => {
+      introScreen.style.display = 'none';
+      chatScreen.style.display = 'block';
     });
-  }
 
-  // Updates the chat window in the browser
-  function updateChatWindow() {
+    // 2. Chat functionality
+    let chatHistory = [];
+
+    // Reference elements
     const chatWindow = document.getElementById('chatWindow');
-    chatWindow.innerHTML = "";
+    const userMessageField = document.getElementById('userMessage');
+    const sendBtn = document.getElementById('sendBtn');
 
-    chatHistory.forEach(line => {
-      const div = document.createElement("div");
+    // Send on button click
+    sendBtn.addEventListener('click', sendMessage);
 
-      // Format text as HTML (with bold, line breaks, etc.)
-      const formattedText = formatToHtml(line);
-
-      if (line.startsWith("User:")) {
-        div.className = "user";
-      } else {
-        div.className = "assistant";
+    // Allow pressing Enter (shift+enter for new line)
+    userMessageField.addEventListener('keypress', function(e) {
+      // If only Enter pressed without shift, send
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendMessage();
       }
-
-      // Use innerHTML so bold, line breaks, etc. are displayed
-      div.innerHTML = formattedText;
-      chatWindow.appendChild(div);
     });
 
-    // Scroll to the bottom each time new content is added
-    chatWindow.scrollTop = chatWindow.scrollHeight;
-  }
-</script>
+    // Auto-resize text area
+    userMessageField.addEventListener('input', autoResizeTextArea);
+    function autoResizeTextArea() {
+      this.style.height = 'auto';
+      this.style.height = (this.scrollHeight) + 'px';
+    }
+
+    // Convert simple Markdown-like formatting to HTML
+    function formatToHtml(text) {
+      // Convert **bold** -> <strong>...</strong>
+      let html = text.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+      // Convert newlines to <br>
+      html = html.replace(/\n/g, '<br>');
+      return html;
+    }
+
+    function sendMessage() {
+      const message = userMessageField.value.trim();
+      if (!message) return;
+
+      // Append user's message to chat history
+      chatHistory.push(`User: ${message}`);
+      updateChatWindow();
+
+      // Send entire chat history to server
+      fetch("https://p5zy3h.lleverage.run/o5txw05x/2.3", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ chatHistory: chatHistory.join("\n") })
+      })
+        .then(response => response.text())  // server returns plain text
+        .then(data => {
+          const assistantResponse = data || "No response.";
+          chatHistory.push(`Assistant: ${assistantResponse}`);
+          updateChatWindow();
+        })
+        .catch(error => {
+          console.error("Error:", error);
+        })
+        .finally(() => {
+          userMessageField.value = "";
+          autoResizeTextArea.call(userMessageField); // reset height after clearing
+          userMessageField.focus();
+        });
+    }
+
+    function updateChatWindow() {
+      chatWindow.innerHTML = "";
+
+      chatHistory.forEach(line => {
+        const div = document.createElement("div");
+        const formattedText = formatToHtml(line);
+
+        if (line.startsWith("User:")) {
+          div.className = "user";
+        } else {
+          div.className = "assistant";
+        }
+        div.innerHTML = formattedText;
+        chatWindow.appendChild(div);
+      });
+
+      // Scroll to bottom
+      chatWindow.scrollTop = chatWindow.scrollHeight;
+    }
+  </script>
 
 </body>
 </html>
