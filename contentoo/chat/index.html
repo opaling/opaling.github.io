@@ -197,7 +197,7 @@
       .then(data => {
         // Show only Maya's response as if she started
         const assistantResponse = data || "No response.";
-        chatHistory.push(`You: ${assistantResponse}`);
+        chatHistory.push(`Maya: ${assistantResponse}`);
         updateChatWindow();
       })
       .catch(error => console.error("Error:", error));
