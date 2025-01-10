@@ -87,14 +87,19 @@
       position: relative;
     }
     .message {
-      margin-bottom: 0.75rem;
+      margin-bottom: 1.25rem; /* a bit more space */
       white-space: pre-wrap;
     }
-    .user {
-      color: #1d4ed8; /* blue tone for user */
+    /* Speaker line in bold */
+    .speaker {
+      font-weight: bold;
+      margin-bottom: 0.25rem;
     }
-    .assistant {
-      color: #059669; /* green tone for assistant */
+    .assistantText {
+      color: #059669; /* green tone for assistant text */
+    }
+    .userText {
+      color: #1d4ed8; /* blue tone for user text */
     }
 
     /* Input container for chat text area + send button */
@@ -151,12 +156,11 @@
     <p>
       Say hello to Maya, your smart, friendly, and creative partner in content creation.
       Whether you need fresh ideas, a sharp content strategy, or a perfectly structured brief,
-      Maya is here to make it happen. 
+      Maya is here to make it happen.
       <br><br>
       Ready to brainstorm, refine, and create with ease?
       Let Maya take your content to the next level.
-      <br><br>
-      Maya (short for “Make Your Articles Awesome”)
+      <br><br> Maya (short for “Make Your Articles Awesome”)
     </p>
     <button id="continueBtn">Continue →</button>
   </div>
@@ -205,7 +209,7 @@
       .then(response => response.text())
       .then(data => {
         const assistantResponse = data || "No response.";
-        chatHistory.push(`Maya: ${assistantResponse}`);
+        chatHistory.push(`Maya ${assistantResponse}`);
         updateChatWindow();
       })
       .catch(error => console.error("Error:", error));
@@ -225,7 +229,7 @@
       if (!message) return;
 
       // Immediately push the user's message
-      chatHistory.push(`You: ${message}`);
+      chatHistory.push(`You ${message}`);
       updateChatWindow();
 
       // Clear the input field before waiting for response
@@ -233,7 +237,7 @@
       autoResizeTextArea.call(userMessageField);
 
       // Show a placeholder "Thinking..." message from Maya
-      chatHistory.push("Maya: Thinking...");
+      chatHistory.push("Maya Thinking...");
       updateChatWindow();
 
       // Send entire chat history to your endpoint
@@ -245,8 +249,8 @@
       .then(response => response.text())
       .then(data => {
         const assistantResponse = data || "No response.";
-        // Replace the placeholder line ("Maya: Thinking...") with the real response
-        chatHistory[chatHistory.length - 1] = `Maya: ${assistantResponse}`;
+        // Replace the placeholder line ("Maya Thinking...") with the real response
+        chatHistory[chatHistory.length - 1] = `Maya ${assistantResponse}`;
         updateChatWindow();
       })
       .catch(error => {
@@ -269,46 +273,46 @@
       // Clear out old content
       chatWindow.innerHTML = "";
 
-      // We'll store a reference to the last message's element in case we need custom scrolling
       let lastMessageElem = null;
-
       chatHistory.forEach(line => {
-        const div = document.createElement("div");
-        div.classList.add("message");
+        const messageDiv = document.createElement("div");
+        messageDiv.classList.add("message");
 
-        // Distinguish user vs. assistant
-        if (line.startsWith("You:")) {
-          div.classList.add("user");
-        } else {
-          div.classList.add("assistant");
-        }
+        // Separate speaker from content, e.g. "Maya Hello..." => speaker="Maya", content="Hello..."
+        const lineParts = line.split(/:(.*)/);
+        const speaker = lineParts[0].trim();        // e.g. "Maya", "You"
+        const rawContent = lineParts[1] ? lineParts[1].trim() : ""; // e.g. "Hello..."
 
-        // Simple formatting (replace **bold** with <strong>, newlines with <br>)
-        const formatted = line
+        // We'll style the speaker differently for user vs. Maya
+        const speakerElem = document.createElement("div");
+        speakerElem.classList.add("speaker");
+        speakerElem.textContent = speaker; // e.g. "Maya" or "You"
+
+        // We'll style the text content
+        const contentElem = document.createElement("div");
+        // Assistant (Maya) in green, user in blue
+        contentElem.classList.add(speaker === "You" ? "userText" : "assistantText");
+
+        // Convert **bold** => <strong> and \n => <br>
+        const formattedContent = rawContent
           .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
           .replace(/\n/g, '<br>');
 
-        div.innerHTML = formatted;
-        chatWindow.appendChild(div);
-        lastMessageElem = div;
+        contentElem.innerHTML = formattedContent;
+
+        // Append elements in the correct order
+        messageDiv.appendChild(speakerElem);
+        messageDiv.appendChild(contentElem);
+
+        chatWindow.appendChild(messageDiv);
+        lastMessageElem = messageDiv;
       });
 
-      // If we have a newly appended message, scroll so that its top is visible
+      // Scroll logic: position top of last message at top
       if (lastMessageElem) {
-        /**
-         * By setting scrollTop to the "offsetTop" of the last message,
-         * the top of the new message is anchored at the top of the view.
-         * If the message is longer than the chat window, the user can
-         * scroll down further to read the rest.
-         *
-         * If you prefer only doing this for Maya's messages, wrap this
-         * in a condition, e.g.:
-         *   if (chatHistory[chatHistory.length - 1].startsWith("Maya:")) { ... }
-         */
         chatWindow.scrollTop = lastMessageElem.offsetTop;
       }
     }
   </script>
-
 </body>
 </html>
