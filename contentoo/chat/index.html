@@ -84,6 +84,7 @@
       overflow-y: auto;
       margin-bottom: 1rem;
       padding: 1rem;
+      position: relative;
     }
     .message {
       margin-bottom: 0.75rem;
@@ -186,7 +187,7 @@
     continueBtn.addEventListener('click', () => {
       introScreen.style.display = 'none';
       chatScreen.style.display = 'block';
-      initiateConversation(); // <-- hidden initial "hey Maya" to server
+      initiateConversation();
     });
 
     // 1) Automated request to have Maya open conversation
@@ -223,11 +224,11 @@
       chatHistory.push(`You: ${message}`);
       updateChatWindow();
 
-      // **Clear the input field immediately** (before waiting for response)
+      // Clear the input field before waiting for response
       userMessageField.value = "";
       autoResizeTextArea.call(userMessageField);
 
-      // **Show a placeholder** "Thinking..." message from Maya
+      // Show a placeholder "Thinking..." message from Maya
       chatHistory.push("Maya: Thinking...");
       updateChatWindow();
 
@@ -261,7 +262,11 @@
 
     // Helper to format & display the chat history
     function updateChatWindow() {
+      // Clear out old content
       chatWindow.innerHTML = "";
+
+      // We'll store a reference to the last message's element in case we need custom scrolling
+      let lastMessageElem = null;
 
       chatHistory.forEach(line => {
         const div = document.createElement("div");
@@ -281,10 +286,23 @@
 
         div.innerHTML = formatted;
         chatWindow.appendChild(div);
+        lastMessageElem = div;
       });
 
-      // Scroll to bottom
-      chatWindow.scrollTop = chatWindow.scrollHeight;
+      // If we have a newly appended message, scroll so that its top is visible
+      if (lastMessageElem) {
+        /**
+         * By setting scrollTop to the "offsetTop" of the last message,
+         * the top of the new message is anchored at the top of the view.
+         * If the message is longer than the chat window, the user can
+         * scroll down further to read the rest.
+         *
+         * If you prefer only doing this for Maya's messages, wrap this
+         * in a condition, e.g.:
+         *   if (chatHistory[chatHistory.length - 1].startsWith("Maya:")) { ... }
+         */
+        chatWindow.scrollTop = lastMessageElem.offsetTop;
+      }
     }
   </script>
 
