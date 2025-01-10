@@ -3,7 +3,6 @@
 <head>
   <meta charset="UTF-8" />
   <title>Talk to Maya</title>
-  <!-- Example minimal styling inspired by your screenshot -->
   <style>
     /* RESET */
     * {
@@ -172,9 +171,11 @@
     const chatScreen = document.getElementById('chatScreen');
     const continueBtn = document.getElementById('continueBtn');
 
+    // When user clicks "Continue", show the chat screen and start "hey Maya" conversation
     continueBtn.addEventListener('click', () => {
       introScreen.style.display = 'none';
       chatScreen.style.display = 'block';
+      initiateConversation(); // <-- hidden initial "hey Maya" to server
     });
 
     // Chat logic
@@ -184,10 +185,26 @@
     const userMessageField = document.getElementById('userMessage');
     const sendBtn = document.getElementById('sendBtn');
 
-    // Send message when user clicks Send
-    sendBtn.addEventListener('click', sendMessage);
+    // 1) Automated request to have Maya open conversation
+    function initiateConversation() {
+      // We'll post "hey Maya" but NOT show it as a user message in the chat
+      fetch("https://p5zy3h.lleverage.run/o5txw05x", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ chatHistory: "User: hey Maya" })
+      })
+      .then(response => response.text())
+      .then(data => {
+        // Show only Maya's response as if she started
+        const assistantResponse = data || "No response.";
+        chatHistory.push(`Assistant: ${assistantResponse}`);
+        updateChatWindow();
+      })
+      .catch(error => console.error("Error:", error));
+    }
 
-    // Send on Enter (Shift+Enter adds newline)
+    // 2) Sending user messages
+    sendBtn.addEventListener('click', sendMessage);
     userMessageField.addEventListener('keypress', function(e) {
       if (e.key === 'Enter' && !e.shiftKey) {
         e.preventDefault();
@@ -195,28 +212,12 @@
       }
     });
 
-    // Auto-resize textarea
-    userMessageField.addEventListener('input', autoResizeTextArea);
-    function autoResizeTextArea() {
-      this.style.height = 'auto';
-      this.style.height = this.scrollHeight + 'px';
-    }
-
-    // Convert some simple markdown to HTML (optional)
-    function formatToHtml(text) {
-      // bold **text** => <strong>text</strong>
-      let html = text.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
-      // new lines => <br>
-      html = html.replace(/\n/g, '<br>');
-      return html;
-    }
-
     function sendMessage() {
       const message = userMessageField.value.trim();
       if (!message) return;
 
       // Add user's message
-      chatHistory.push(`User: ${message}`);
+      chatHistory.push(`You: ${message}`);
       updateChatWindow();
 
       // Send entire chat history to your endpoint
@@ -241,6 +242,14 @@
       });
     }
 
+    // 3) Auto-resize textarea
+    userMessageField.addEventListener('input', autoResizeTextArea);
+    function autoResizeTextArea() {
+      this.style.height = 'auto';
+      this.style.height = this.scrollHeight + 'px';
+    }
+
+    // 4) Helper to format & display the chat history
     function updateChatWindow() {
       chatWindow.innerHTML = "";
 
@@ -248,16 +257,19 @@
         const div = document.createElement("div");
         div.classList.add("message");
 
-        // style the message based on user or assistant
+        // Distinguish user vs. assistant
         if (line.startsWith("User:")) {
           div.classList.add("user");
         } else {
           div.classList.add("assistant");
         }
 
-        // Convert text to HTML if desired
-        const formattedText = formatToHtml(line);
-        div.innerHTML = formattedText;
+        // Simple formatting (replace **bold** with <strong>, newlines with <br>)
+        const formatted = line
+          .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+          .replace(/\n/g, '<br>');
+
+        div.innerHTML = formatted;
         chatWindow.appendChild(div);
       });
 
