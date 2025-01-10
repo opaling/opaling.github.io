@@ -86,20 +86,28 @@
       padding: 1rem;
       position: relative;
     }
+
+    /* Each chat message container */
     .message {
-      margin-bottom: 1.25rem; /* a bit more space */
+      margin-bottom: 1.25rem; 
       white-space: pre-wrap;
     }
-    /* Speaker line in bold */
-    .speaker {
+
+    /* Speaker label (bold, black) */
+    .speakerLabel {
       font-weight: bold;
       margin-bottom: 0.25rem;
+      color: #000; /* Distinct from the message text */
     }
-    .assistantText {
-      color: #059669; /* green tone for assistant text */
+
+    /* Message text for user vs. Maya */
+    .userMessageBody {
+      color: #1d4ed8; /* blue for user */
+      font-weight: normal;
     }
-    .userText {
-      color: #1d4ed8; /* blue tone for user text */
+    .assistantMessageBody {
+      color: #059669; /* green for Maya */
+      font-weight: normal;
     }
 
     /* Input container for chat text area + send button */
@@ -160,7 +168,8 @@
       <br><br>
       Ready to brainstorm, refine, and create with ease?
       Let Maya take your content to the next level.
-      <br><br> Maya (short for “Make Your Articles Awesome”)
+      <br><br>
+      Maya (short for “Make Your Articles Awesome”)
     </p>
     <button id="continueBtn">Continue →</button>
   </div>
@@ -180,27 +189,26 @@
   </div>
 
   <script>
-    // Intro-to-Chat logic
+    // References to our DOM elements
     const introScreen = document.getElementById('introScreen');
     const chatScreen = document.getElementById('chatScreen');
     const continueBtn = document.getElementById('continueBtn');
-
-    // Chat logic
-    let chatHistory = [];
     const chatWindow = document.getElementById('chatWindow');
     const userMessageField = document.getElementById('userMessage');
     const sendBtn = document.getElementById('sendBtn');
 
-    // When user clicks "Continue", show the chat screen and start "hey Maya" conversation
+    // Local chatHistory array
+    let chatHistory = [];
+
+    // 1) Show chat screen on "Continue" + initiate conversation
     continueBtn.addEventListener('click', () => {
       introScreen.style.display = 'none';
       chatScreen.style.display = 'block';
       initiateConversation();
     });
 
-    // 1) Automated request to have Maya open conversation
+    // 2) Automatic "hey Maya" message (hidden from user side)
     function initiateConversation() {
-      // We'll post "hey Maya" but NOT show it as a user message
       fetch("https://p5zy3h.lleverage.run/o5txw05x/2.3", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -209,13 +217,13 @@
       .then(response => response.text())
       .then(data => {
         const assistantResponse = data || "No response.";
-        chatHistory.push(`Maya ${assistantResponse}`);
+        chatHistory.push(`Maya: ${assistantResponse}`);
         updateChatWindow();
       })
       .catch(error => console.error("Error:", error));
     }
 
-    // 2) Sending user messages
+    // 3) Sending user messages
     sendBtn.addEventListener('click', sendMessage);
     userMessageField.addEventListener('keypress', function(e) {
       if (e.key === 'Enter' && !e.shiftKey) {
@@ -228,19 +236,19 @@
       const message = userMessageField.value.trim();
       if (!message) return;
 
-      // Immediately push the user's message
-      chatHistory.push(`You ${message}`);
+      // Add user message to chatHistory
+      chatHistory.push(`You: ${message}`);
       updateChatWindow();
 
-      // Clear the input field before waiting for response
+      // Clear input field
       userMessageField.value = "";
       autoResizeTextArea.call(userMessageField);
 
-      // Show a placeholder "Thinking..." message from Maya
-      chatHistory.push("Maya Thinking...");
+      // Show a placeholder from Maya
+      chatHistory.push("Maya: Thinking...");
       updateChatWindow();
 
-      // Send entire chat history to your endpoint
+      // Send entire chat to server
       fetch("https://p5zy3h.lleverage.run/o5txw05x/2.3", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -249,8 +257,8 @@
       .then(response => response.text())
       .then(data => {
         const assistantResponse = data || "No response.";
-        // Replace the placeholder line ("Maya Thinking...") with the real response
-        chatHistory[chatHistory.length - 1] = `Maya ${assistantResponse}`;
+        // Replace placeholder with real text
+        chatHistory[chatHistory.length - 1] = `Maya: ${assistantResponse}`;
         updateChatWindow();
       })
       .catch(error => {
@@ -261,57 +269,81 @@
       });
     }
 
-    // 3) Auto-resize textarea
+    // 4) Auto-resize textarea
     userMessageField.addEventListener('input', autoResizeTextArea);
     function autoResizeTextArea() {
       this.style.height = 'auto';
       this.style.height = this.scrollHeight + 'px';
     }
 
-    // Helper to format & display the chat history
+    // 5) Render the conversation
     function updateChatWindow() {
-      // Clear out old content
       chatWindow.innerHTML = "";
-
       let lastMessageElem = null;
+
+      // Build each message
       chatHistory.forEach(line => {
         const messageDiv = document.createElement("div");
         messageDiv.classList.add("message");
 
-        // Separate speaker from content, e.g. "Maya Hello..." => speaker="Maya", content="Hello..."
-        const lineParts = line.split(/:(.*)/);
-        const speaker = lineParts[0].trim();        // e.g. "Maya", "You"
-        const rawContent = lineParts[1] ? lineParts[1].trim() : ""; // e.g. "Hello..."
+        // Extract speaker & content, e.g. "You: Hello" => speaker="You", content="Hello"
+        const { speaker, content } = parseLine(line);
 
-        // We'll style the speaker differently for user vs. Maya
+        // Speaker label (bold)
         const speakerElem = document.createElement("div");
-        speakerElem.classList.add("speaker");
-        speakerElem.textContent = speaker; // e.g. "Maya" or "You"
+        speakerElem.classList.add("speakerLabel");
+        speakerElem.textContent = speaker; // e.g. "You" or "Maya"
 
-        // We'll style the text content
+        // Message body (colored text)
         const contentElem = document.createElement("div");
-        // Assistant (Maya) in green, user in blue
-        contentElem.classList.add(speaker === "You" ? "userText" : "assistantText");
+        // Based on speaker, pick a color class
+        if (speaker === "You") {
+          contentElem.classList.add("userMessageBody");
+        } else {
+          contentElem.classList.add("assistantMessageBody");
+        }
 
-        // Convert **bold** => <strong> and \n => <br>
-        const formattedContent = rawContent
+        // Basic formatting: **bold** => <strong>, \n => <br>
+        const formatted = content
           .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
           .replace(/\n/g, '<br>');
 
-        contentElem.innerHTML = formattedContent;
+        contentElem.innerHTML = formatted;
 
-        // Append elements in the correct order
+        // Append speaker + message text
         messageDiv.appendChild(speakerElem);
         messageDiv.appendChild(contentElem);
 
+        // Add to the chat window
         chatWindow.appendChild(messageDiv);
         lastMessageElem = messageDiv;
       });
 
-      // Scroll logic: position top of last message at top
+      // Scroll so top of the last message is shown
       if (lastMessageElem) {
         chatWindow.scrollTop = lastMessageElem.offsetTop;
       }
+    }
+
+    // Helper: parse "Speaker: text" into { speaker, content }
+    function parseLine(line) {
+      // Covers "You: something" or "Maya: something"
+      if (line.startsWith("You:")) {
+        return {
+          speaker: "You",
+          content: line.substring(4).trim()
+        };
+      } else if (line.startsWith("Maya:")) {
+        return {
+          speaker: "Maya",
+          content: line.substring(5).trim()
+        };
+      } 
+      // fallback if format is unexpected
+      return {
+        speaker: "Maya",
+        content: line
+      };
     }
   </script>
 </body>
