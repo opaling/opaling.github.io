@@ -28,11 +28,13 @@
     }
     .user {
       color: blue;
-      margin: 5px 0;
+      margin: 10px 0;
+      white-space: pre-wrap;
     }
     .assistant {
       color: green;
-      margin: 5px 0;
+      margin: 10px 0;
+      white-space: pre-wrap;
     }
   </style>
 </head>
@@ -57,6 +59,19 @@
     }
   });
 
+  // Convert plain text with simple Markdown to HTML
+  // - Replaces **bold** notation with <strong> tags
+  // - Replaces newlines with <br>
+  function formatToHtml(text) {
+    // Convert **bold** -> <strong>...</strong>
+    let html = text.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+
+    // Convert newlines to <br>
+    html = html.replace(/\n/g, '<br>');
+
+    return html;
+  }
+
   function sendMessage() {
     const userMessageField = document.getElementById('userMessage');
     const message = userMessageField.value.trim();
@@ -72,9 +87,9 @@
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ chatHistory: chatHistory.join("\n") })
     })
-    .then(response => response.text())  // Use text() because the server returns plain text
+    .then(response => response.text())  // The server returns plain text
     .then(data => {
-      // "data" is the server's response as plain text
+      // 'data' is the server's response as a plain text string
       const assistantResponse = data || "No response.";
       chatHistory.push(`Assistant: ${assistantResponse}`);
       updateChatWindow();
@@ -96,12 +111,18 @@
 
     chatHistory.forEach(line => {
       const div = document.createElement("div");
+
+      // Format text as HTML (with bold, line breaks, etc.)
+      const formattedText = formatToHtml(line);
+
       if (line.startsWith("User:")) {
         div.className = "user";
       } else {
         div.className = "assistant";
       }
-      div.textContent = line;
+
+      // Use innerHTML so bold, line breaks, etc. are displayed
+      div.innerHTML = formattedText;
       chatWindow.appendChild(div);
     });
 
