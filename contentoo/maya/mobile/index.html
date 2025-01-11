@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Talk to Maya</title>
+
+  <!-- Viewport meta tag for mobile responsiveness -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- PWA: Link to the manifest.json for Android/Chrome -->
+  <link rel="manifest" href="manifest.json" />
+
+  <!-- iOS: Enable "Add to Home Screen" behavior -->
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <!-- The following is your iOS home screen icon -->
+  <link rel="apple-touch-icon" href="contentoo-logo-dark.png" />
+
+  <!-- iOS: The title shown under the app icon on the home screen -->
+  <meta name="apple-mobile-web-app-title" content="Maya Chat" />
+
+  <!-- Basic styling -->
+  <style>
+    /* RESET */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    /* 
+      Responsive layout
+      We'll ensure the container can shrink on small screens 
+      and remain a comfortable size on larger screens.
+    */
+    body {
+      background-color: #fdfaf6;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      color: #333;
+      line-height: 1.4;
+      /* For mobile, ensure the body at least fills the viewport */
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Header */
+    header {
+      display: flex;
+      align-items: center;
+      padding: 16px;
+      background-color: #fff;
+      border-bottom: 1px solid #ccc;
+    }
+
+    #logo {
+      height: 40px;
+      margin-right: 12px;
+    }
+    #pageTitle {
+      font-size: 1.25rem;
+      font-weight: bold;
+    }
+
+    /* Main container for screens */
+    .screen {
+      width: 100%;
+      max-width: 600px;
+      margin: 2rem auto;
+      background-color: #fff;
+      border-radius: 12px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+      padding: 1.5rem;
+      display: none; 
+    }
+
+    /* Visible by default on page load for demonstration */
+    #introScreen {
+      display: block;
+    }
+
+    /* Intro screen styling */
+    #introScreen h2 {
+      font-size: 1.4rem;
+      margin-bottom: 1rem;
+    }
+    #introScreen p {
+      font-size: 1rem;
+      color: #555;
+      margin-bottom: 1.5rem;
+    }
+    #introScreen button {
+      display: inline-block;
+      background-color: #000;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 0.75rem 1.5rem;
+      font-size: 1rem;
+      cursor: pointer;
+      font-weight: 500;
+    }
+    #introScreen button:hover {
+      background-color: #333;
+    }
+
+    /* Chat screen styling */
+    #chatHeading {
+      font-size: 1.4rem;
+      margin-bottom: 1rem;
+    }
+    #chatWindow {
+      height: 400px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      background-color: #fafafa;
+      overflow-y: auto;
+      margin-bottom: 1rem;
+      padding: 1rem;
+      position: relative;
+    }
+    .message {
+      margin-bottom: 1.25rem; 
+      white-space: pre-wrap;
+    }
+    .speakerLabel {
+      font-weight: bold;
+      margin-bottom: 0.25rem;
+      color: #000;
+    }
+    .userMessageBody {
+      color: #1d4ed8;
+      font-weight: normal;
+    }
+    .assistantMessageBody {
+      color: #059669;
+      font-weight: normal;
+    }
+
+    /* Input container */
+    #inputContainer {
+      display: flex;
+      gap: 0.75rem;
+    }
+    #userMessage {
+      flex: 1;
+      min-height: 40px;
+      resize: none; 
+      padding: 0.75rem;
+      font-size: 1rem;
+      line-height: 1.4;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-family: inherit;
+      color: #444;
+    }
+    #userMessage::placeholder {
+      color: #aaa;
+    }
+    #sendBtn {
+      background-color: #000;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 0.75rem 1.25rem;
+      font-size: 1rem;
+      cursor: pointer;
+      font-weight: 500;
+      flex-shrink: 0;
+    }
+    #sendBtn:hover {
+      background-color: #333;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header>
+    <img src="contentoo-logo-dark.png" alt="Contentoo Logo" id="logo" />
+    <div id="pageTitle">Talk to Maya</div>
+  </header>
+
+  <!-- INTRO SCREEN -->
+  <div id="introScreen" class="screen">
+    <h2>Meet Maya: Your AI Content Ally</h2>
+    <p>
+      Say hello to Maya, your smart, friendly, and creative partner in content creation.
+      Whether you need fresh ideas, a sharp content strategy, or a perfectly structured brief,
+      Maya is here to make it happen.
+      <br><br>
+      Ready to brainstorm, refine, and create with ease?
+      Let Maya take your content to the next level.
+    </p>
+    <button id="continueBtn">Continue →</button>
+  </div>
+
+  <!-- CHAT SCREEN -->
+  <div id="chatScreen" class="screen">
+    <h2 id="chatHeading">Talk to Maya</h2>
+    <div id="chatWindow"></div>
+    <div id="inputContainer">
+      <textarea
+        id="userMessage"
+        placeholder="Type your message here..."
+        rows="1"
+      ></textarea>
+      <button id="sendBtn">Send</button>
+    </div>
+  </div>
+
+  <script>
+    // DOM references
+    const introScreen = document.getElementById('introScreen');
+    const chatScreen = document.getElementById('chatScreen');
+    const continueBtn = document.getElementById('continueBtn');
+    const chatWindow = document.getElementById('chatWindow');
+    const userMessageField = document.getElementById('userMessage');
+    const sendBtn = document.getElementById('sendBtn');
+    
+    // Chat state
+    let chatHistory = [];
+
+    // Show chat screen on "Continue"
+    continueBtn.addEventListener('click', () => {
+      introScreen.style.display = 'none';
+      chatScreen.style.display = 'block';
+      initiateConversation();
+    });
+
+    // Automated request to open conversation
+    function initiateConversation() {
+      fetch("https://p5zy3h.lleverage.run/o5txw05x/2.3", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ chatHistory: "hey Maya" })
+      })
+      .then(response => response.text())
+      .then(data => {
+        const assistantResponse = data || "No response.";
+        chatHistory.push(`Maya: ${assistantResponse}`);
+        updateChatWindow();
+      })
+      .catch(console.error);
+    }
+
+    // Sending user messages
+    sendBtn.addEventListener('click', sendMessage);
+    userMessageField.addEventListener('keypress', function(e) {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendMessage();
+      }
+    });
+
+    function sendMessage() {
+      const message = userMessageField.value.trim();
+      if (!message) return;
+
+      // User message
+      chatHistory.push(`You: ${message}`);
+      updateChatWindow();
+
+      // Clear field
+      userMessageField.value = "";
+      autoResizeTextArea.call(userMessageField);
+
+      // Show placeholder from Maya
+      chatHistory.push("Maya: Thinking...");
+      updateChatWindow();
+
+      // Send to server
+      fetch("https://p5zy3h.lleverage.run/o5txw05x/2.3", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ chatHistory: chatHistory.join("\n") })
+      })
+      .then(response => response.text())
+      .then(data => {
+        const assistantResponse = data || "No response.";
+        chatHistory[chatHistory.length - 1] = `Maya: ${assistantResponse}`;
+        updateChatWindow();
+      })
+      .catch(console.error)
+      .finally(() => userMessageField.focus());
+    }
+
+    // Auto-resize textarea
+    userMessageField.addEventListener('input', autoResizeTextArea);
+    function autoResizeTextArea() {
+      this.style.height = 'auto';
+      this.style.height = this.scrollHeight + 'px';
+    }
+
+    // Rendering chat
+    function updateChatWindow() {
+      chatWindow.innerHTML = "";
+      let lastMessageElem = null;
+
+      chatHistory.forEach(line => {
+        const { speaker, content } = parseLine(line);
+
+        const msgDiv = document.createElement("div");
+        msgDiv.classList.add("message");
+
+        // Speaker line
+        const speakerElem = document.createElement("div");
+        speakerElem.classList.add("speakerLabel");
+        speakerElem.textContent = speaker;
+
+        // Message body
+        const contentElem = document.createElement("div");
+        contentElem.classList.add(
+          speaker === "You" ? "userMessageBody" : "assistantMessageBody"
+        );
+        // Basic formatting
+        const formatted = content
+          .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+          .replace(/\n/g, '<br>');
+        contentElem.innerHTML = formatted;
+
+        msgDiv.appendChild(speakerElem);
+        msgDiv.appendChild(contentElem);
+        chatWindow.appendChild(msgDiv);
+        lastMessageElem = msgDiv;
+      });
+
+      // Scroll so top of the last message is shown
+      if (lastMessageElem) {
+        chatWindow.scrollTop = lastMessageElem.offsetTop;
+      }
+    }
+
+    function parseLine(line) {
+      if (line.startsWith("You:")) {
+        return { speaker: "You", content: line.substring(4).trim() };
+      } else if (line.startsWith("Maya:")) {
+        return { speaker: "Maya", content: line.substring(5).trim() };
+      }
+      return { speaker: "Maya", content: line };
+    }
+  </script>
+</body>
+</html>
