@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="nl">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport"
@@ -8,7 +8,7 @@
                  user-scalable=no,
                  minimum-scale=1.0,
                  maximum-scale=1.0" />
-  <title>Teddy’s Adventure</title>
+  <title>Logeren bij Opa en Oma</title>
 
   <!-- PWA Manifest -->
   <link rel="manifest" href="manifest.json" />
@@ -31,47 +31,82 @@
 
 <script>
 /****************************************
- * 1) STORY DATA
+ * 1) NEW STORY DATA
  ****************************************/
-// Replace the images below with your own
-// DALL·E-generated files: image1.png ... image9.png
-// The text is in Dutch, adjust as needed.
+// Replace "images/image1.png" etc. with your actual image paths.
+// The line breaks (\n) keep the text structured on separate lines.
 const storyPages = [
   {
     image: "images/image1.png",
-    text: "Teddy kijkt naar de zon,\nHij gaat logeren, wat een pret!\nHij pakt zijn knuffel in,\nEn zwaait naar mama: 'Ik ben klaar, let's go net!'"
+    text: 
+      "Felix pakt zijn rugzak voor het logeren.\n" +
+      "\"Ik neem meneer Beer ook mee!\" roept hij blij.\n" +
+      "Silas kijkt toe met grote ogen.\n" +
+      "\"Ikke ook tas pakken?\" vraagt hij nieuwsgierig en verlegen."
   },
   {
     image: "images/image2.png",
-    text: "Op zijn fietsje door de buurt,\nMet z’n tas en grote lach.\nNaar oma’s witte huisje,\nWaar hij een nachtje slapen mag."
+    text:
+      "Mama rijdt de auto naar opa en oma's huis.\n" +
+      "\"Zijn we er al?\" vraagt Felix om de vijf minuut.\n" +
+      "Silas klapt in zijn handjes en lacht.\n" +
+      "\"Auto rijden, vroem vroem!\" roept hij voluit."
   },
   {
     image: "images/image3.png",
-    text: "Oma roept: 'Dag lieve Teddy,\nKom binnen, zo gezellig!\nDe blokken staan al klaar,\nKom bouwen, speel gerust heel ijverig.'"
+    text:
+      "Opa staat al te zwaaien bij de deur.\n" +
+      "\"Welkom, welkom!\" roept hij met een lach.\n" +
+      "Oma knuffelt Felix en Silas stevig.\n" +
+      "\"Wat fijn dat jullie komen logeren vandaag!\""
   },
   {
     image: "images/image4.png",
-    text: "Teddy maakt koekjes in de keuken,\nEn strooit met bloem in ’t rond.\nOma lacht: 'Oh wat een rommel,\nMaar je bent zo blij, dus het is gezond!'"
+    text:
+      "\"Zullen we koekjes bakken?\" stelt oma voor.\n" +
+      "Felix strooit bloem over het hele aanrecht.\n" +
+      "Silas duwt zijn vingertjes in het deeg.\n" +
+      "\"Mmm, lekker!\" zegt hij, dat is pas echt."
   },
   {
     image: "images/image5.png",
-    text: "Nu mag Teddy lekker in bad,\nSpettert met zijn bootje heen en weer.\nOpa wordt zelfs kleddernat,\nMaar lacht: 'Een feestje heb jij hier!'"
+    text:
+      "In de tuin zoeken ze naar kleine beestjes.\n" +
+      "\"Kijk, een lieveheersbeestje!\" wijst Felix aan.\n" +
+      "Silas hurkt neer bij een mierennest.\n" +
+      "\"Kleine diertjes,\" fluistert hij, helemaal ondersteboven."
   },
   {
     image: "images/image6.png",
-    text: "Teddy gaapt, het is bedtijd,\nOpa leest hem nog een verhaaltje voor.\nOma fluistert: 'Welterusten liefje,\nDroom zacht en slaap nu maar door.'"
+    text:
+      "Plons! In bad gaan is een groot feest.\n" +
+      "Opa maakt gekke bellen met de zeep.\n" +
+      "\"Pas op, een walvis!\" roept Felix luid.\n" +
+      "Silas giechelt terwijl hij door het water scheurt."
   },
   {
     image: "images/image7.png",
-    text: "’s Morgens roept Teddy vrolijk:\n'Het is licht, mag ik eruit?'\nOma lacht: 'Kom maar ontbijten.\nWil je brood of een beschuit?'"
+    text:
+      "Opa leest voor uit een mooi prentenboek.\n" +
+      "Over een draak die niet kon vliegen.\n" +
+      "Felix en Silas kruipen dicht tegen hem aan.\n" +
+      "Ze luisteren stil, hun oogjes beginnen te wiegen."
   },
   {
     image: "images/image8.png",
-    text: "Teddy speelt met opa voetbal.\nOma roept: 'Hup, Teddybeer!'\nTring tring, de deurbel gaat.\nKijk, daar is mama weer!"
+    text:
+      "De ochtendzon schijnt door het raam.\n" +
+      "\"Wakker worden, slaapkoppen!\" zingt oma zacht.\n" +
+      "Felix ruikt de geur van verse pannenkoeken.\n" +
+      "\"Opstaan, Silas!\" Hij trekt aan het deken met kracht."
   },
   {
     image: "images/image9.png",
-    text: "Teddy zwaait: 'Ik ga naar huis toe,\nHet was heel leuk geweest.\nJa, bij opa en oma,\nIs het altijd weer een feest!'"
+    text:
+      "Mama komt terug om hen op te halen.\n" +
+      "\"Hebben jullie het leuk gehad?\" vraagt ze teder.\n" +
+      "\"Ja!\" roept Felix, \"We willen snel weer komen!\"\n" +
+      "Silas knikt, \"Bij opa oma, weer en weer!\""
   }
 ];
 
@@ -96,6 +131,7 @@ function createPage(page) {
 
   const textEl = document.createElement('div');
   textEl.className = 'page-text';
+  // Replace \n with <br> for multiple lines
   textEl.innerHTML = page.text.replace(/\n/g, '<br/>');
   pageWrapper.appendChild(textEl);
 
@@ -105,7 +141,7 @@ function createPage(page) {
 function displayPage(index) {
   // Clear previous content
   storyContainer.innerHTML = '';
-  // Add new content
+  // Create and append the new page
   const newPage = createPage(storyPages[index]);
   storyContainer.appendChild(newPage);
 
