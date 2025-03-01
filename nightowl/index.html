@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport"
+        content="width=device-width,
+                 initial-scale=1.0,
+                 user-scalable=no,
+                 minimum-scale=1.0,
+                 maximum-scale=1.0" />
+  <title>Teddy’s Adventure</title>
+
+  <!-- PWA Manifest -->
+  <link rel="manifest" href="manifest.json" />
+
+  <!-- iOS Full-Screen Meta Tags -->
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <link rel="apple-touch-icon" href="images/icon.png" />
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<div class="story-container" id="storyContainer"></div>
+
+<div class="nav-buttons">
+  <button id="prevBtn">&larr; Prev</button>
+  <button id="nextBtn">Next &rarr;</button>
+</div>
+
+<script>
+/****************************************
+ * 1) STORY DATA
+ ****************************************/
+// Replace the images below with your own
+// DALL·E-generated files: image1.png ... image9.png
+// The text is in Dutch, adjust as needed.
+const storyPages = [
+  {
+    image: "images/image1.png",
+    text: "Teddy kijkt naar de zon,\nHij gaat logeren, wat een pret!\nHij pakt zijn knuffel in,\nEn zwaait naar mama: 'Ik ben klaar, let's go net!'"
+  },
+  {
+    image: "images/image2.png",
+    text: "Op zijn fietsje door de buurt,\nMet z’n tas en grote lach.\nNaar oma’s witte huisje,\nWaar hij een nachtje slapen mag."
+  },
+  {
+    image: "images/image3.png",
+    text: "Oma roept: 'Dag lieve Teddy,\nKom binnen, zo gezellig!\nDe blokken staan al klaar,\nKom bouwen, speel gerust heel ijverig.'"
+  },
+  {
+    image: "images/image4.png",
+    text: "Teddy maakt koekjes in de keuken,\nEn strooit met bloem in ’t rond.\nOma lacht: 'Oh wat een rommel,\nMaar je bent zo blij, dus het is gezond!'"
+  },
+  {
+    image: "images/image5.png",
+    text: "Nu mag Teddy lekker in bad,\nSpettert met zijn bootje heen en weer.\nOpa wordt zelfs kleddernat,\nMaar lacht: 'Een feestje heb jij hier!'"
+  },
+  {
+    image: "images/image6.png",
+    text: "Teddy gaapt, het is bedtijd,\nOpa leest hem nog een verhaaltje voor.\nOma fluistert: 'Welterusten liefje,\nDroom zacht en slaap nu maar door.'"
+  },
+  {
+    image: "images/image7.png",
+    text: "’s Morgens roept Teddy vrolijk:\n'Het is licht, mag ik eruit?'\nOma lacht: 'Kom maar ontbijten.\nWil je brood of een beschuit?'"
+  },
+  {
+    image: "images/image8.png",
+    text: "Teddy speelt met opa voetbal.\nOma roept: 'Hup, Teddybeer!'\nTring tring, de deurbel gaat.\nKijk, daar is mama weer!"
+  },
+  {
+    image: "images/image9.png",
+    text: "Teddy zwaait: 'Ik ga naar huis toe,\nHet was heel leuk geweest.\nJa, bij opa en oma,\nIs het altijd weer een feest!'"
+  }
+];
+
+/****************************************
+ * 2) DISPLAY & NAVIGATION
+ ****************************************/
+let currentIndex = 0;
+
+const storyContainer = document.getElementById('storyContainer');
+const prevBtn = document.getElementById('prevBtn');
+const nextBtn = document.getElementById('nextBtn');
+
+// Create a page DOM from the story data
+function createPage(page) {
+  const pageWrapper = document.createElement('div');
+  pageWrapper.className = 'page';
+
+  const imgEl = document.createElement('img');
+  imgEl.className = 'page-image';
+  imgEl.src = page.image;
+  pageWrapper.appendChild(imgEl);
+
+  const textEl = document.createElement('div');
+  textEl.className = 'page-text';
+  textEl.innerHTML = page.text.replace(/\n/g, '<br/>');
+  pageWrapper.appendChild(textEl);
+
+  return pageWrapper;
+}
+
+function displayPage(index) {
+  // Clear previous content
+  storyContainer.innerHTML = '';
+  // Add new content
+  const newPage = createPage(storyPages[index]);
+  storyContainer.appendChild(newPage);
+
+  // Update button states
+  prevBtn.disabled = (index === 0);
+  nextBtn.disabled = (index === storyPages.length - 1);
+}
+
+// Navigation
+function goPrev() {
+  if (currentIndex > 0) {
+    currentIndex--;
+    displayPage(currentIndex);
+  }
+}
+function goNext() {
+  if (currentIndex < storyPages.length - 1) {
+    currentIndex++;
+    displayPage(currentIndex);
+  }
+}
+
+// Button listeners
+prevBtn.addEventListener('click', goPrev);
+nextBtn.addEventListener('click', goNext);
+
+// Swipe detection
+let startX = 0, endX = 0;
+storyContainer.addEventListener('touchstart', (e) => {
+  startX = e.changedTouches[0].clientX;
+});
+storyContainer.addEventListener('touchend', (e) => {
+  endX = e.changedTouches[0].clientX;
+  handleSwipe();
+});
+
+function handleSwipe() {
+  const threshold = 50;
+  if (endX - startX > threshold) {
+    goPrev(); // Swipe right
+  } else if (startX - endX > threshold) {
+    goNext(); // Swipe left
+  }
+}
+
+// Initialize
+displayPage(currentIndex);
+</script>
+</body>
+</html>
