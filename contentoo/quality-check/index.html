@@ -1,0 +1,441 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Free Content Quality Check | Contentoo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary-color: #2F80ED;
+      --primary-hover: #1366D6;
+      --accent-color: #FF6B6B;
+      --text-color: #333333;
+      --light-gray: #F5F7FA;
+      --border-color: #E0E0E0;
+      --success-color: #27AE60;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Inter', sans-serif;
+      color: var(--text-color);
+      line-height: 1.6;
+      background-color: #FFFFFF;
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+    
+    header {
+      background-color: #FFFFFF;
+      padding: 20px 0;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    
+    .logo {
+      max-height: 36px;
+    }
+    
+    .hero {
+      padding: 60px 0;
+      background-color: var(--light-gray);
+      text-align: center;
+    }
+    
+    .hero h1 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 20px;
+      color: var(--text-color);
+    }
+    
+    .hero p {
+      font-size: 1.2rem;
+      max-width: 800px;
+      margin: 0 auto 30px;
+      color: #555;
+    }
+    
+    .content-section {
+      padding: 60px 0;
+      background-color: #FFFFFF;
+    }
+    
+    .form-container {
+      max-width: 800px;
+      margin: 0 auto;
+      background-color: #FFFFFF;
+      padding: 40px;
+      border-radius: 10px;
+      box-shadow: 0 5px 25px rgba(0, 0, 0, 0.08);
+    }
+    
+    .form-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 30px;
+      text-align: center;
+    }
+    
+    .form-group {
+      margin-bottom: 20px;
+    }
+    
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+    }
+    
+    input[type="email"],
+    input[type="text"] {
+      width: 100%;
+      padding: 12px 15px;
+      border: 1px solid var(--border-color);
+      border-radius: 5px;
+      font-size: 1rem;
+      transition: border-color 0.3s;
+    }
+    
+    input[type="email"]:focus,
+    input[type="text"]:focus {
+      outline: none;
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 2px rgba(47, 128, 237, 0.1);
+    }
+    
+    .url-input-group {
+      display: flex;
+      align-items: center;
+    }
+    
+    .url-number {
+      font-weight: 600;
+      color: var(--primary-color);
+      margin-right: 10px;
+      width: 24px;
+    }
+    
+    .submit-button {
+      display: block;
+      width: 100%;
+      padding: 14px 20px;
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      margin-top: 20px;
+    }
+    
+    .submit-button:hover {
+      background-color: var(--primary-hover);
+    }
+    
+    .features {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      margin-top: 60px;
+    }
+    
+    .feature-item {
+      flex-basis: calc(33.333% - 30px);
+      text-align: center;
+      padding: 20px;
+      margin-bottom: 30px;
+    }
+    
+    .feature-icon {
+      width: 64px;
+      height: 64px;
+      background-color: rgba(47, 128, 237, 0.1);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+    }
+    
+    .feature-icon svg {
+      width: 32px;
+      height: 32px;
+      fill: var(--primary-color);
+    }
+    
+    .feature-title {
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+    
+    footer {
+      background-color: var(--light-gray);
+      padding: 40px 0;
+    }
+    
+    .footer-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .footer-logo {
+      max-height: 30px;
+    }
+    
+    .footer-links a {
+      color: var(--text-color);
+      text-decoration: none;
+      margin-left: 20px;
+      font-size: 0.9rem;
+    }
+    
+    .footer-links a:hover {
+      color: var(--primary-color);
+    }
+    
+    .copyright {
+      margin-top: 30px;
+      text-align: center;
+      font-size: 0.9rem;
+      color: #777;
+    }
+    
+    .success-message {
+      display: none;
+      background-color: rgba(39, 174, 96, 0.1);
+      border: 1px solid var(--success-color);
+      padding: 20px;
+      border-radius: 5px;
+      text-align: center;
+      margin-top: 20px;
+    }
+    
+    .success-message p {
+      color: var(--success-color);
+      font-weight: 500;
+    }
+    
+    @media (max-width: 768px) {
+      .hero h1 {
+        font-size: 2rem;
+      }
+      
+      .hero p {
+        font-size: 1rem;
+      }
+      
+      .form-container {
+        padding: 30px 20px;
+      }
+      
+      .feature-item {
+        flex-basis: 100%;
+      }
+      
+      .footer-content {
+        flex-direction: column;
+      }
+      
+      .footer-links {
+        margin-top: 20px;
+      }
+      
+      .footer-links a {
+        margin: 0 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <img src="https://app.contentoo.com/static/media/contentoo-logo-dark.png" alt="Contentoo Logo" class="logo">
+    </div>
+  </header>
+  
+  <section class="hero">
+    <div class="container">
+      <h1>Free Content Quality Check</h1>
+      <p>Discover how your content stacks up against industry standards and get actionable insights to improve your content strategy.</p>
+    </div>
+  </section>
+  
+  <section class="content-section">
+    <div class="container">
+      <div class="form-container">
+        <h2 class="form-title">Get Your Free Content Quality Report</h2>
+        <form id="urlForm">
+          <div class="form-group">
+            <label for="email">Email Address</label>
+            <input type="email" id="email" name="email" placeholder="your.email@company.com" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="url1">Share your hero content articles (minimum 5)</label>
+            <div class="url-input-group">
+              <span class="url-number">1</span>
+              <input type="text" id="url1" name="url1" placeholder="https://www.example.com/article1" required>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <div class="url-input-group">
+              <span class="url-number">2</span>
+              <input type="text" id="url2" name="url2" placeholder="https://www.example.com/article2">
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <div class="url-input-group">
+              <span class="url-number">3</span>
+              <input type="text" id="url3" name="url3" placeholder="https://www.example.com/article3">
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <div class="url-input-group">
+              <span class="url-number">4</span>
+              <input type="text" id="url4" name="url4" placeholder="https://www.example.com/article4">
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <div class="url-input-group">
+              <span class="url-number">5</span>
+              <input type="text" id="url5" name="url5" placeholder="https://www.example.com/article5">
+            </div>
+          </div>
+          
+          <button type="submit" class="submit-button">Get Your Free Report</button>
+        </form>
+        
+        <div id="successMessage" class="success-message">
+          <p>Thank you! Your content quality report will be sent to your email within 10 minutes.</p>
+        </div>
+      </div>
+      
+      <div class="features">
+        <div class="feature-item">
+          <div class="feature-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-14h2v6h-2zm0 8h2v2h-2z"/>
+            </svg>
+          </div>
+          <h3 class="feature-title">Comprehensive Analysis</h3>
+          <p>Get detailed insights on uniqueness, accuracy, readability and quality- and brandconsistency.</p>
+        </div>
+        
+        <div class="feature-item">
+          <div class="feature-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+              <path d="M21 3H3c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H3V5h18v14zM8 15c0-1.66 1.34-3 3-3h2c1.66 0 3 1.34 3 3v1H8v-1zm3-7c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2zm7-3h-4v2h4V5zm0 4h-4v2h4V9zm-8 4h-4v2h4v-2zm-4-4h4V7H6v2z"/>
+            </svg>
+          </div>
+          <h3 class="feature-title">Competitive Benchmarking</h3>
+          <p>Understand how your content compares to industry standards and competitors.</p>
+        </div>
+        
+        <div class="feature-item">
+          <div class="feature-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+              <path d="M9 21c0 .55.45 1 1 1h4c.55 0 1-.45 1-1v-1H9v1zm3-19C8.14 2 5 5.14 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.86-3.14-7-7-7zm2.85 11.1l-.85.6V16h-4v-2.3l-.85-.6C7.8 12.16 7 10.63 7 9c0-2.76 2.24-5 5-5s5 2.24 5 5c0 1.63-.8 3.16-2.15 4.1z"/>
+            </svg>
+          </div>
+          <h3 class="feature-title">Actionable Recommendations</h3>
+          <p>Receive specific suggestions to enhance your content quality and performance.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  <footer>
+    <div class="container">
+      <div class="footer-content">
+        <img src="https://app.contentoo.com/static/media/contentoo-logo-dark.png" alt="Contentoo Logo" class="footer-logo">
+        <div class="footer-links">
+          <a href="#">Privacy Policy</a>
+          <a href="#">Terms of Service</a>
+          <a href="#">Contact Us</a>
+        </div>
+      </div>
+      <div class="copyright">
+        © 2025 Contentoo. All rights reserved.
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    const form = document.getElementById('urlForm');
+    const successMessage = document.getElementById('successMessage');
+    
+    form.addEventListener('submit', function(event) {
+      event.preventDefault(); // Prevents page reload
+      
+      // Get email value
+      const emailValue = document.getElementById('email').value.trim();
+      
+      // Gather URL values
+      const urls = [
+        document.getElementById('url1').value.trim(),
+        document.getElementById('url2').value.trim(),
+        document.getElementById('url3').value.trim(),
+        document.getElementById('url4').value.trim(),
+        document.getElementById('url5').value.trim()
+      ].filter(url => url !== ""); // Remove empty entries
+      
+      // Construct data object
+      const data = {
+        email: emailValue,
+        urls: urls
+      };
+      
+      // Show loading state
+      const submitButton = form.querySelector('.submit-button');
+      const originalButtonText = submitButton.textContent;
+      submitButton.textContent = 'Sending...';
+      submitButton.disabled = true;
+      
+      // Send the POST request using Fetch API
+      fetch("https://contentoo.app.n8n.cloud/webhook-test/90e0887e-427f-4032-86ed-7b6832b2c164", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(data)
+      })
+      .then(response => response.text())
+      .then(result => {
+        console.log("Success:", result);
+        // Hide form and show success message
+        form.style.display = 'none';
+        successMessage.style.display = 'block';
+      })
+      .catch(error => {
+        console.error("Error:", error);
+        alert("Something went wrong while sending data. Please try again.");
+        submitButton.textContent = originalButtonText;
+        submitButton.disabled = false;
+      });
+    });
+  </script>
+</body>
+</html>
